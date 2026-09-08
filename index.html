@@ -1,0 +1,1640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Restaurant Brief Builder — Steps 1 & 1.2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400;6..96,600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --porcelain:#F1F3EF;
+  --porcelain-deep:#E4E8E1;
+  --bottle:#16352A;
+  --bottle-soft:#27503F;
+  --ink:#1B1F1C;
+  --ink-soft:#5A625B;
+  --menu-red:#B4322A;
+  --brass:#9A7D3C;
+  --line:#C9D0C6;
+  --radius:3px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--porcelain);
+  color:var(--ink);
+  font-family:"IBM Plex Sans",system-ui,sans-serif;
+  font-size:15px;
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3{font-family:"Bodoni Moda",Georgia,serif;font-weight:400;margin:0;letter-spacing:.01em}
+h1{font-size:38px;line-height:1.1}
+h2{font-size:26px;line-height:1.2}
+h3{font-size:19px}
+p{margin:0 0 12px}
+a{color:var(--bottle-soft)}
+code,pre,.mono{font-family:"IBM Plex Mono",monospace}
+
+/* ---------- shell ---------- */
+.masthead{
+  background:var(--bottle);color:#EFF3EC;
+  padding:22px 32px;display:flex;gap:24px;align-items:baseline;flex-wrap:wrap;
+  border-bottom:4px solid var(--brass);
+}
+.masthead h1{color:#F6F8F4;font-size:29px}
+.masthead .sub{color:#A9BDB1;font-size:13.5px;max-width:52ch}
+.shell{display:grid;grid-template-columns:236px minmax(0,1fr);gap:0;align-items:start}
+.rail{
+  position:sticky;top:0;padding:28px 20px 40px;
+  border-right:1px solid var(--line);min-height:70vh;
+}
+.rail ol{list-style:none;margin:0;padding:0}
+.rail li{margin-bottom:2px}
+.rail button{
+  width:100%;text-align:left;background:none;border:0;padding:11px 12px;cursor:pointer;
+  font:inherit;color:var(--ink-soft);border-left:3px solid transparent;display:flex;gap:11px;
+  border-radius:0 var(--radius) var(--radius) 0;
+}
+.rail button:hover{background:var(--porcelain-deep);color:var(--ink)}
+.rail button[aria-current="true"]{
+  border-left-color:var(--menu-red);color:var(--ink);background:#fff;font-weight:600;
+}
+.rail .num{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--brass);padding-top:2px;min-width:26px}
+.rail .hint{font-size:12.5px;color:var(--ink-soft);margin-top:26px;padding:0 12px;line-height:1.5}
+.stage{padding:34px 40px 90px;max-width:1060px}
+.panel[hidden]{display:none}
+.lede{max-width:66ch;color:var(--ink-soft);margin-bottom:26px}
+
+/* ---------- blocks ---------- */
+.card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:22px;margin-bottom:22px}
+.card > h3{margin-bottom:4px}
+.card .note{color:var(--ink-soft);font-size:13.5px;margin-bottom:16px;max-width:70ch}
+textarea,input,select{
+  width:100%;font:inherit;padding:9px 11px;border:1px solid var(--line);
+  border-radius:var(--radius);background:#FCFDFB;color:var(--ink);
+}
+textarea{resize:vertical;line-height:1.5}
+textarea.mono{font-size:12.5px;line-height:1.6}
+input:focus,textarea:focus,select:focus{outline:2px solid var(--bottle-soft);outline-offset:1px;border-color:var(--bottle-soft)}
+label{display:block;font-size:12.5px;color:var(--ink-soft);margin-bottom:4px}
+.field{margin-bottom:14px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:0 16px}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:0 14px}
+.row-actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:14px}
+
+button.act{
+  font:inherit;font-weight:500;cursor:pointer;padding:9px 18px;border-radius:var(--radius);
+  border:1px solid var(--bottle);background:var(--bottle);color:#F6F8F4;
+}
+button.act:hover{background:var(--bottle-soft)}
+button.ghost{background:transparent;color:var(--bottle);border:1px solid var(--line)}
+button.ghost:hover{background:var(--porcelain-deep)}
+button.tiny{padding:5px 10px;font-size:12.5px}
+button.danger{color:var(--menu-red);border-color:#E2C4C1;background:transparent}
+button:focus-visible{outline:2px solid var(--menu-red);outline-offset:2px}
+
+.promptbox{
+  background:#12261E;color:#DCE7DE;border-radius:var(--radius);padding:18px 20px;
+  font-family:"IBM Plex Mono",monospace;font-size:12.4px;line-height:1.62;
+  white-space:pre-wrap;max-height:430px;overflow:auto;border:1px solid #0C1A14;
+}
+.status{font-size:13px;margin-left:4px}
+.status.ok{color:var(--bottle-soft)}
+.status.bad{color:var(--menu-red)}
+
+/* ---------- menu builder ---------- */
+.cat{border:1px solid var(--line);border-radius:var(--radius);margin-bottom:16px;background:#FCFDFB}
+.cat-head{display:flex;gap:10px;align-items:center;padding:10px 12px;background:var(--porcelain-deep);border-bottom:1px solid var(--line)}
+.cat-head input{background:#fff;font-weight:600;max-width:320px}
+.item{display:grid;grid-template-columns:1.6fr .7fr 2fr 1.4fr .9fr auto;gap:8px;padding:9px 12px;border-bottom:1px solid var(--porcelain-deep);align-items:start}
+.item:last-child{border-bottom:0}
+.item .flags{display:flex;gap:9px;flex-wrap:wrap;font-size:12px;color:var(--ink-soft);grid-column:1/-1;padding-left:2px}
+.item .flags label{display:inline-flex;gap:5px;align-items:center;margin:0;font-size:12px}
+.item input[type=checkbox]{width:auto}
+.item.flagged{background:#FBF7EA}
+.itemhead{display:grid;grid-template-columns:1.6fr .7fr 2fr 1.4fr .9fr auto;gap:8px;padding:6px 12px;font-size:11.5px;color:var(--ink-soft);border-bottom:1px solid var(--line)}
+
+.gate{border-left:4px solid var(--brass);background:#F8F5EC;padding:16px 18px;border-radius:0 var(--radius) var(--radius) 0;margin-bottom:22px}
+.gate.clear{border-left-color:var(--bottle-soft);background:#EFF4EE}
+.meter{height:5px;background:var(--porcelain-deep);border-radius:99px;margin:10px 0 4px;max-width:340px;overflow:hidden}
+.meter span{display:block;height:100%;background:var(--bottle-soft)}
+.gate h3{margin-bottom:6px}
+.gate ul{margin:8px 0 0;padding-left:18px;font-size:13.5px}
+.gate li{margin-bottom:4px}
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
+
+/* ---------- template picker ---------- */
+.tgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(268px,1fr));gap:18px;margin-top:6px}
+.tcard{border:1px solid var(--line);background:#fff;border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column;text-align:left;padding:0;font:inherit;color:inherit;cursor:pointer}
+.tcard:hover{border-color:var(--bottle-soft)}
+.tcard[aria-pressed="true"]{border-color:var(--menu-red);box-shadow:inset 0 0 0 1px var(--menu-red)}
+/* ---------- production mode ---------- */
+.modes{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin:10px 0 4px}
+.mode{text-align:left;font:inherit;color:inherit;background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;cursor:pointer;display:flex;flex-direction:column;gap:5px}
+.mode:hover{border-color:var(--bottle-soft)}
+.mode[aria-pressed="true"]{border-color:var(--menu-red);box-shadow:inset 0 0 0 1px var(--menu-red)}
+.mode b{font-size:15px}
+.mode span{font-size:12.8px;color:var(--ink-soft);line-height:1.45}
+/* ---------- prompt pack ---------- */
+.shot{border:1px solid var(--line);border-radius:var(--radius);margin-bottom:12px;overflow:hidden}
+.shot-h{display:flex;gap:12px;align-items:baseline;padding:10px 14px;background:var(--porcelain-deep);cursor:pointer}
+.shot-h .n{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--brass)}
+.shot-h b{font-size:14px}
+.shot-h .meta{margin-left:auto;font-size:12px;color:var(--ink-soft)}
+.shot pre{margin:0;padding:14px 16px;background:#12261E;color:#DCE7DE;font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.6;white-space:pre-wrap;overflow-x:auto}
+.shot[data-open="false"] pre{display:none}
+.tthumb{aspect-ratio:3/2;background:var(--bottle);position:relative;overflow:hidden}
+.tthumb img{width:100%;height:100%;object-fit:cover;display:block}
+.tthumb .ph{position:absolute;inset:0;display:flex;align-items:flex-end;padding:14px;background:linear-gradient(160deg,#1E4234,#0E1F18);color:#9FB6A8;font-family:"IBM Plex Mono",monospace;font-size:11px}
+.tbody{padding:14px 15px 16px;display:flex;flex-direction:column;gap:6px;flex:1}
+.tbody h3{font-size:18px}
+.tbody .spec{font-family:"IBM Plex Mono",monospace;font-size:11.5px;color:var(--brass)}
+.tbody .why{font-size:13px;color:var(--ink-soft);line-height:1.45}
+.tbody .fit{margin-top:auto;padding-top:8px;font-size:12px;color:var(--bottle-soft)}
+.rank{display:inline-block;background:var(--brass);color:#fff;font-size:11px;padding:1px 8px;border-radius:99px;margin-bottom:2px}
+
+/* ---------- slots ---------- */
+.slot{display:grid;grid-template-columns:34px 108px 1fr 96px;gap:12px;padding:12px;border-bottom:1px solid var(--porcelain-deep);align-items:start}
+.slot:last-child{border-bottom:0}
+.slot .n{font-family:"IBM Plex Mono",monospace;color:var(--brass);font-size:12px;padding-top:3px}
+.slot .role{font-weight:600;font-size:13.5px}
+.slot .role small{display:block;font-weight:400;color:var(--ink-soft);font-size:11.5px;margin-top:2px}
+.slot .desc{font-size:13px;color:var(--ink-soft);line-height:1.5}
+.slot .desc b{color:var(--ink);font-weight:500}
+.slot .dur{display:flex;gap:6px;align-items:center;font-size:12.5px}
+.slot .dur input{width:56px;padding:5px 7px;text-align:right}
+.slot.over{background:#FBF7EA}
+.tally{display:flex;gap:22px;flex-wrap:wrap;padding:12px;background:var(--porcelain-deep);font-size:13px;border-radius:var(--radius);margin-top:14px}
+.tally b{font-family:"IBM Plex Mono",monospace;color:var(--bottle)}
+.lockbox{background:#12261E;color:#DCE7DE;border-radius:var(--radius);padding:15px 17px;font-family:"IBM Plex Mono",monospace;font-size:12.2px;line-height:1.6;white-space:pre-wrap}
+.asset{border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;margin-bottom:12px;background:#fff}
+.asset h3{font-size:16px;margin-bottom:2px}
+.asset .cnt{font-family:"IBM Plex Mono",monospace;font-size:11.5px;color:var(--brass)}
+.asset p{font-size:13.5px;color:var(--ink-soft);margin:6px 0 0}
+.asset .used{font-size:12px;color:var(--ink-soft);margin-top:6px}
+@media (max-width:700px){ .slot{grid-template-columns:26px 1fr;gap:8px} .slot .dur{justify-self:start} }
+.chip{background:#fff;border:1px solid var(--line);border-radius:999px;padding:4px 12px;font-size:12.5px}
+.chip b{font-weight:600}
+.toast{
+  position:fixed;left:50%;bottom:26px;transform:translateX(-50%);
+  background:var(--bottle);color:#F1F5EF;padding:10px 20px;border-radius:var(--radius);
+  font-size:13.5px;box-shadow:0 6px 20px rgba(22,53,42,.28);z-index:50;
+}
+@media (prefers-reduced-motion:no-preference){
+  .toast{animation:rise .22s ease-out}
+  @keyframes rise{from{opacity:0;transform:translate(-50%,8px)}to{opacity:1;transform:translate(-50%,0)}}
+}
+@media (max-width:860px){
+  .shell{grid-template-columns:1fr}
+  .rail{position:static;border-right:0;border-bottom:1px solid var(--line);min-height:0;padding-bottom:16px}
+  .rail ol{display:flex;gap:6px;overflow-x:auto}
+  .rail .hint{display:none}
+  .stage{padding:24px 18px 70px}
+  .item,.itemhead{grid-template-columns:1fr 1fr}
+  .itemhead{display:none}
+}
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <h1>Restaurant Brief Builder</h1>
+  <span class="sub">Collect verified restaurant facts once, then feed them straight into the video prompt engine.</span>
+</header>
+
+<div class="shell">
+  <nav class="rail" aria-label="Steps">
+    <ol>
+      <li><button data-go="s1" aria-current="true"><span class="num">1</span><span>Research prompt</span></button></li>
+      <li><button data-go="s12"><span class="num">1.2</span><span>Restaurant bio</span></button></li>
+      <li><button data-go="s2"><span class="num">2</span><span>Campaign brief</span></button></li>
+      <li><button data-go="s3"><span class="num">3</span><span>Template</span></button></li>
+      <li><button data-go="s4"><span class="num">4</span><span>Assets to shoot</span></button></li>
+    </ol>
+    <p class="hint">The template sets the shot count and lengths. Everything after it — script beats, asset list, prompts — is derived from those slots.</p>
+  </nav>
+
+  <main class="stage">
+
+  <!-- ============ STEP 1 ============ -->
+  <section class="panel" id="s1">
+    <h2>Build the research prompt</h2>
+    <p class="lede">Paste whatever you can grab from the restaurant's Google listing, website, or delivery page. The tool wraps it in a research prompt that forces the AI to return only sourced, checkable facts as JSON — never invented prices.</p>
+
+    <div class="card">
+      <h3>Paste raw restaurant details</h3>
+      <p class="note">Google Business listing, About page, menu page, delivery app copy, recent reviews. Messy is fine. Even just a name and city works.</p>
+      <div class="field">
+        <textarea id="raw" rows="9" placeholder="Zaytoun Grill House&#10;Khalifa St, Al Ain, Abu Dhabi&#10;4.6 stars, 1,240 Google reviews&#10;Lebanese charcoal grill, open since 2011&#10;instagram.com/zaytoungrill&#10;+971 3 000 0000"></textarea>
+      </div>
+      <div class="row-actions">
+        <button class="act" id="build">Generate research prompt</button>
+        <button class="ghost" id="clearRaw">Clear</button>
+      </div>
+    </div>
+
+    <div class="card" id="promptCard" hidden>
+      <h3>Your research prompt</h3>
+      <p class="note">Copy this into Claude, ChatGPT, Gemini, or Perplexity with web search switched on. Ask for the JSON only.</p>
+      <div class="promptbox" id="promptOut"></div>
+      <div class="row-actions">
+        <button class="act" id="copyPrompt">Copy prompt</button>
+        <span class="status" id="copyStatus"></span>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Bring the answer back</h3>
+      <p class="note">Paste the JSON the AI returned. Code fences and stray commentary are stripped automatically.</p>
+      <div class="field">
+        <textarea id="jsonIn" class="mono" rows="8" placeholder='{ "restaurant": { "name": "..." } }'></textarea>
+      </div>
+      <div class="row-actions">
+        <button class="act" id="loadJson">Fill the bio form</button>
+        <button class="ghost" id="skip">Skip and fill it in myself</button>
+        <span class="status" id="jsonStatus"></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ STEP 1.2 ============ -->
+  <section class="panel" id="s12" hidden>
+    <h2>Restaurant bio</h2>
+    <p class="lede">Fill in what you have and leave the rest. More detail means a richer script, but nothing here is required. The one thing tracked separately is prices: an unconfirmed price stays out of on-screen text until you mark it verified.</p>
+
+    <div id="gate" class="gate"></div>
+
+    <div class="card">
+      <h3>Identity</h3>
+      <div class="grid2">
+        <div class="field"><label for="f_name">Restaurant name</label><input id="f_name" data-k="name"></div>
+        <div class="field"><label for="f_style">Style</label>
+          <select id="f_style" data-k="style">
+            <option value="">Choose one</option>
+            <option>Fast food</option><option>Fast casual</option><option>Casual dining</option>
+            <option>Fine dining</option><option>Café / Coffee shop</option><option>Cafeteria</option>
+            <option>Bakery / Patisserie</option><option>Food truck</option><option>Cloud kitchen</option>
+            <option>Buffet</option><option>Bar / Lounge</option><option>Dessert shop</option>
+            <option>Juice / Smoothie bar</option><option>Steakhouse</option><option>Seafood house</option>
+          </select>
+        </div>
+        <div class="field"><label for="f_cuisine">Cuisine</label><input id="f_cuisine" data-k="cuisines" placeholder="Lebanese, grill"></div>
+        <div class="field"><label for="f_band">Price band</label><input id="f_band" data-k="price_band" placeholder="Mid-range · 60–120 AED per head"></div>
+        <div class="field"><label for="f_est">Year established</label><input id="f_est" data-k="established_year"></div>
+        <div class="field"><label for="f_tag">Tagline</label><input id="f_tag" data-k="tagline"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Location and contact</h3>
+      <div class="grid2">
+        <div class="field"><label for="f_addr">Street address</label><input id="f_addr" data-k="location.address_line"></div>
+        <div class="field"><label for="f_city">City</label><input id="f_city" data-k="location.city"></div>
+        <div class="field"><label for="f_area">Area or neighbourhood</label><input id="f_area" data-k="location.neighborhood"></div>
+        <div class="field"><label for="f_country">Country</label><input id="f_country" data-k="location.country"></div>
+        <div class="field"><label for="f_maps">Google Maps link</label><input id="f_maps" data-k="location.google_maps_url"></div>
+        <div class="field"><label for="f_hours">Opening hours</label><input id="f_hours" data-k="hours_text" placeholder="Daily 12:00–01:00"></div>
+      </div>
+      <div class="grid3">
+        <div class="field"><label for="f_phone">Mobile</label><input id="f_phone" data-k="contact.phone"></div>
+        <div class="field"><label for="f_land">Landline</label><input id="f_land" data-k="contact.landline"></div>
+        <div class="field"><label for="f_wa">WhatsApp</label><input id="f_wa" data-k="contact.whatsapp"></div>
+        <div class="field"><label for="f_email">Email</label><input id="f_email" data-k="contact.email"></div>
+        <div class="field"><label for="f_web">Website</label><input id="f_web" data-k="contact.website" placeholder="https://"></div>
+        <div class="field"><label for="f_book">Booking or delivery link</label><input id="f_book" data-k="contact.reservation_url" placeholder="https://"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Social profiles</h3>
+      <p class="note">Full links, starting with https. These get scanned in Step 2 for the brand's existing look.</p>
+      <div class="grid3">
+        <div class="field"><label for="f_ig">Instagram</label><input id="f_ig" data-k="social.instagram" placeholder="https://instagram.com/"></div>
+        <div class="field"><label for="f_fb">Facebook</label><input id="f_fb" data-k="social.facebook" placeholder="https://facebook.com/"></div>
+        <div class="field"><label for="f_tt">TikTok</label><input id="f_tt" data-k="social.tiktok" placeholder="https://tiktok.com/@"></div>
+        <div class="field"><label for="f_sc">Snapchat</label><input id="f_sc" data-k="social.snapchat"></div>
+        <div class="field"><label for="f_yt">YouTube</label><input id="f_yt" data-k="social.youtube"></div>
+        <div class="field"><label for="f_x">X</label><input id="f_x" data-k="social.x"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Story</h3>
+      <div class="field"><label for="f_desc">Short description</label><textarea id="f_desc" data-k="description" rows="2"></textarea></div>
+      <div class="field"><label for="f_bio">Bio</label><textarea id="f_bio" data-k="bio" rows="3"></textarea></div>
+      <div class="field"><label for="f_hist">History</label><textarea id="f_hist" data-k="history" rows="3"></textarea></div>
+      <div class="grid2">
+        <div class="field"><label for="f_usp">What makes it different</label><input id="f_usp" data-k="unique_selling_points" placeholder="Charcoal pit, family recipes, 24h service"></div>
+        <div class="field"><label for="f_aud">Who eats there</label><input id="f_aud" data-k="audience" placeholder="Families, late-night workers"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>How it looks on camera</h3>
+      <p class="note">Step 2 turns these into lighting, lens and set-dressing choices, so keep them concrete.</p>
+      <div class="grid2">
+        <div class="field"><label for="f_int">Interior</label><input id="f_int" data-k="visual_identity.interior_style" placeholder="Warm wood, brass pendants, open charcoal grill"></div>
+        <div class="field"><label for="f_plate">Plating and serveware</label><input id="f_plate" data-k="visual_identity.plating_style" placeholder="Copper platters, flatbread on paper"></div>
+        <div class="field"><label for="f_light">Light in the room</label><input id="f_light" data-k="visual_identity.lighting" placeholder="Low tungsten, grill flare, neon sign spill"></div>
+        <div class="field"><label for="f_colors">Brand colours</label><input id="f_colors" data-k="visual_identity.brand_colors" placeholder="#0F5132, #E8B54B"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Ratings and what reviewers say</h3>
+      <div class="grid2">
+        <div class="field"><label for="f_rate">Rating and review count</label><input id="f_rate" data-k="ratings_text" placeholder="Google 4.6 · 1,240 reviews"></div>
+        <div class="field"><label for="f_praise">Praised most</label><input id="f_praise" data-k="review_highlights.praised" placeholder="Mixed grill, portion size, service speed"></div>
+        <div class="field"><label for="f_crit">Complained about</label><input id="f_crit" data-k="review_highlights.criticized" placeholder="Parking, weekend wait"></div>
+        <div class="field"><label for="f_top">Most mentioned dishes</label><input id="f_top" data-k="most_reviewed_items" placeholder="Shish taouk, lamb ouzi"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Menu</h3>
+      <p class="note">Dish names alone are enough to build a shot list. Add a price plus the link it came from when you want that number to appear on screen — those are the ones marked verified.</p>
+      <div class="grid3">
+        <div class="field"><label for="f_curr">Currency</label><input id="f_curr" data-k="menu.currency" placeholder="AED"></div>
+        <div class="field"><label for="f_msrc">Menu source</label><input id="f_msrc" data-k="menu.source_url" placeholder="https://"></div>
+        <div class="field"><label for="f_mdate">Prices checked on</label><input id="f_mdate" data-k="menu.last_verified" placeholder="2026-09-08"></div>
+      </div>
+      <div id="menu"></div>
+      <div class="row-actions">
+        <button class="ghost tiny" id="addCat">Add a menu section</button>
+      </div>
+    </div>
+
+    <div class="row-actions">
+      <button class="act" id="toStep2">Continue to Step 2</button>
+      <button class="ghost" id="copyOut">Copy the brief as JSON</button>
+      <button class="ghost" id="dlOut">Download the brief</button>
+      <button class="ghost" id="loadFileBtn">Open a saved brief</button>
+      <input type="file" id="loadFile" accept=".json,application/json" hidden>
+      <span class="status" id="outStatus"></span>
+    </div>
+  </section>
+
+  <!-- ============ STEP 2 — CAMPAIGN BRIEF ============ -->
+  <section class="panel" id="s2" hidden>
+    <h2>Campaign brief</h2>
+    <p class="lede">What this particular reel has to do. This decides the template more than the cuisine does — the same restaurant needs a different cut for an opening night than for a Tuesday delivery push.</p>
+
+    <div class="card">
+      <h3>The job</h3>
+      <div class="grid2">
+        <div class="field"><label for="c_obj">Objective</label>
+          <select id="c_obj" data-c="objective">
+            <option value="awareness">Get the place noticed</option>
+            <option value="dish">Launch or push one dish</option>
+            <option value="offer">Run an offer or discount</option>
+            <option value="opening">Announce an opening or relaunch</option>
+            <option value="delivery">Drive delivery and late-night orders</option>
+            <option value="story">Tell the brand story</option>
+            <option value="event">Fill an event or occasion</option>
+          </select>
+        </div>
+        <div class="field"><label for="c_plat">Where it runs</label>
+          <select id="c_plat" data-c="platform">
+            <option value="reels">Instagram Reels</option>
+            <option value="tiktok">TikTok</option>
+            <option value="shorts">YouTube Shorts</option>
+            <option value="ads">Paid ads</option>
+            <option value="all">All of them</option>
+          </select>
+        </div>
+        <div class="field"><label for="c_len">Target length</label>
+          <select id="c_len" data-c="target_secs">
+            <option value="15">15 seconds</option>
+            <option value="20">20 seconds</option>
+            <option value="25" selected>25 seconds</option>
+            <option value="30">30 seconds</option>
+            <option value="45">45 seconds</option>
+          </select>
+        </div>
+        <div class="field"><label for="c_tone">Tone</label>
+          <select id="c_tone" data-c="tone">
+            <option value="appetite">Appetite-first, fast and loud</option>
+            <option value="premium">Premium and restrained</option>
+            <option value="warm">Warm and family</option>
+            <option value="street">Street food energy</option>
+            <option value="moody">Moody and late-night</option>
+          </select>
+        </div>
+        <div class="field"><label for="c_lang">Language on screen</label><input id="c_lang" data-c="language" placeholder="English, or English + Arabic"></div>
+        <div class="field"><label for="c_cta">Call to action</label><input id="c_cta" data-c="cta" placeholder="Book a table · Order on Talabat · Visit us today"></div>
+      </div>
+      <div class="field"><label for="c_offer">Offer wording, if there is one</label><input id="c_offer" data-c="offer_text" placeholder="2 for 1 on grills, Sunday to Wednesday"></div>
+      <div class="grid2">
+        <div class="field"><label for="c_must">Must appear</label><input id="c_must" data-c="must_include" placeholder="The charcoal pit, the new terrace"></div>
+        <div class="field"><label for="c_avoid">Keep out</label><input id="c_avoid" data-c="avoid" placeholder="Alcohol, empty tables, staff faces"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Generation engine</h3>
+      <p class="note">Clip limits differ by model, and they change often. Set the longest single clip your model reliably produces — slots longer than that get flagged so you can split them.</p>
+      <div class="grid3">
+        <div class="field"><label for="c_model">Model</label>
+          <select id="c_model" data-c="model">
+            <option value="omni">Gemini Omni 1.1 Flash</option>
+            <option value="veo">Veo 3.1</option><option value="kling">Kling</option>
+            <option value="runway">Runway</option><option value="sora">Sora</option>
+            <option value="hailuo">Hailuo / MiniMax</option><option value="seedance">Seedance</option>
+            <option value="other">Something else</option>
+          </select>
+        </div>
+        <div class="field"><label for="c_clip">Longest clip, in seconds</label><input id="c_clip" data-c="max_clip" value="10" inputmode="numeric"></div>
+        <div class="field"><label for="c_ratio">Frame</label>
+          <select id="c_ratio" data-c="aspect"><option value="9:16">9:16 vertical</option><option value="1:1">1:1 square</option><option value="16:9">16:9 wide</option></select>
+        </div>
+      </div>
+      <div class="gate" id="modelNote"></div>
+    </div>
+
+    <div class="row-actions">
+      <button class="act" id="toTemplates">See matching templates</button>
+    </div>
+  </section>
+
+  <!-- ============ STEP 3 — TEMPLATE ============ -->
+  <section class="panel" id="s3" hidden>
+    <h2>Template</h2>
+    <p class="lede">Ranked against the bio and the brief. The template fixes the shot count, the length of each beat and the job each shot does — the script gets written into these slots, not around them.</p>
+
+    <div class="card">
+      <h3>How this one gets made</h3>
+      <p class="note">This changes what you ask the restaurant for, and how the shot prompts are written.</p>
+      <div class="modes">
+        <button class="mode" data-mode="hybrid" aria-pressed="true">
+          <b>Shoot and animate</b>
+          <span>The restaurant's own photos of their room, their dishes and their frontage, brought to life as image-to-video. What you show is what they actually have.</span>
+        </button>
+        <button class="mode" data-mode="fullai" aria-pressed="false">
+          <b>Fully generated</b>
+          <span>Every shot from a text prompt. Nothing to collect, ready same day, but the food and the room on screen are invented rather than theirs.</span>
+        </button>
+      </div>
+      <div class="gate" id="modeNote"></div>
+    </div>
+
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:14px;flex-wrap:wrap">
+        <h3 id="recTitle">Recommended for this brief</h3>
+        <button class="ghost tiny" id="showAll">Show all templates</button>
+      </div>
+      <div class="tgrid" id="tgrid"></div>
+    </div>
+
+    <div id="tdetail" hidden>
+      <div class="card">
+        <h3 id="tdName"></h3>
+        <p class="note" id="tdNote"></p>
+        <div id="slots"></div>
+        <div class="tally" id="tally"></div>
+      </div>
+
+      <div class="card">
+        <h3>Set lock</h3>
+        <p class="note" id="setNote"></p>
+        <div class="lockbox" id="setlock"></div>
+      </div>
+
+      <div class="card">
+        <h3>Style lock</h3>
+        <p class="note">Paste this block into every shot prompt, word for word, without editing it between shots. Shot-to-shot drift is what makes AI reels look stitched together — one fixed look block is the cheapest fix there is.</p>
+        <div class="lockbox" id="lock"></div>
+        <div class="row-actions">
+          <button class="act" id="copyLock">Copy style lock</button>
+          <span class="status" id="lockStatus"></span>
+        </div>
+      </div>
+
+      <div class="row-actions">
+        <button class="act" id="toAssets">See what to shoot</button>
+        <button class="ghost" id="copyOut2">Copy the whole brief as JSON</button>
+        <span class="status" id="outStatus2"></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ STEP 4 — IMAGES + PROMPTS ============ -->
+  <section class="panel" id="s4" hidden>
+    <h2 id="s4title">Images and shot prompts</h2>
+    <p class="lede" id="s4lede">Everything here comes from the slots you locked in Step 3.</p>
+
+    <div class="card">
+      <h3 id="imgTitle">Images needed</h3>
+      <p class="note" id="imgNote"></p>
+      <div class="tally" id="imgTally"></div>
+      <div id="assetList" style="margin-top:16px"></div>
+      <div class="row-actions">
+        <button class="act" id="copyAssets">Copy the image request</button>
+        <span class="status" id="assetStatus"></span>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Composite in post, never generate</h3>
+      <p class="note">Logos, menu text and prices come out warped from every video model. Keep them as overlay layers on top of the generated footage.</p>
+      <div class="chips" id="overlayList"></div>
+    </div>
+
+    <div class="card">
+      <h3>Shot prompts</h3>
+      <p class="note" id="packNote"></p>
+      <div id="pack"></div>
+      <div class="row-actions">
+        <button class="act" id="copyPack">Copy all shot prompts</button>
+        <button class="ghost" id="dlPack">Download the prompt pack</button>
+        <span class="status" id="packStatus"></span>
+      </div>
+    </div>
+  </section>
+
+  </main>
+</div>
+
+<script>
+"use strict";
+
+/* ---------------- state ---------------- */
+const S = {
+  name:"", style:"", cuisines:"", price_band:"", established_year:"", tagline:"",
+  location:{address_line:"",city:"",neighborhood:"",country:"",google_maps_url:""},
+  hours_text:"",
+  contact:{phone:"",landline:"",whatsapp:"",email:"",website:"",reservation_url:""},
+  social:{instagram:"",facebook:"",tiktok:"",snapchat:"",youtube:"",x:""},
+  description:"", bio:"", history:"", unique_selling_points:"", audience:"",
+  visual_identity:{interior_style:"",plating_style:"",lighting:"",brand_colors:""},
+  ratings_text:"", review_highlights:{praised:"",criticized:""}, most_reviewed_items:"",
+  menu:{currency:"",source_url:"",last_verified:"",categories:[]}
+};
+
+const $  = (s,r)=> (r||document).querySelector(s);
+const $$ = (s,r)=> Array.from((r||document).querySelectorAll(s));
+const uid = ()=> Math.random().toString(36).slice(2,9);
+function scrollTo(sel,block){
+  const el = typeof sel==="string" ? $(sel) : sel;
+  if(el && typeof el.scrollIntoView==="function") el.scrollIntoView({behavior:"smooth",block:block||"start"});
+}
+
+function dig(obj,path){ return path.split(".").reduce((o,k)=> (o==null?o:o[k]), obj); }
+function put(obj,path,val){
+  const ks = path.split("."); let o = obj;
+  for(let i=0;i<ks.length-1;i++){ if(typeof o[ks[i]]!=="object"||o[ks[i]]===null) o[ks[i]]={}; o=o[ks[i]]; }
+  o[ks[ks.length-1]] = val;
+}
+function toast(msg){
+  const t = document.createElement("div"); t.className="toast"; t.textContent=msg;
+  document.body.appendChild(t); setTimeout(()=>t.remove(),2400);
+}
+function flat(v){
+  if(Array.isArray(v)) return v.map(x=> typeof x==="object"&&x ? (x.name||x.item||x.title||JSON.stringify(x)) : x).join(", ");
+  if(v && typeof v==="object") return Object.values(v).map(flat).join(", ");
+  return v==null ? "" : String(v);
+}
+
+/* ---------------- navigation ---------------- */
+function go(id){
+  $$(".panel").forEach(p=> p.hidden = (p.id!==id));
+  $$(".rail button").forEach(b=> b.setAttribute("aria-current", String(b.dataset.go===id)));
+  if(id==="s3") renderTemplates();
+  if(id==="s4") renderAssets();
+  if(window.scrollTo) try{ window.scrollTo(0,0); }catch(e){}
+}
+$$(".rail button").forEach(b=> b.addEventListener("click", ()=> go(b.dataset.go)));
+
+/* ---------------- Step 1: the research prompt ---------------- */
+function buildPrompt(raw){
+  const today = new Date().toISOString().slice(0,10);
+  const known = raw.trim() ? raw.trim() : "(none supplied — identify the restaurant from the name and city in this message)";
+  return [
+"You are a research analyst preparing a factual dossier on one specific restaurant for a video production team.",
+"Search the live web before answering. Do not answer from memory alone.",
+"",
+"RESTAURANT AS KNOWN TO ME",
+known,
+"",
+"MISSION",
+"Return a single JSON object describing this exact restaurant. The dossier will be used to script and shoot marketing videos, so wrong prices or wrong dishes cause real commercial damage.",
+"",
+"IDENTITY RULES — read before searching",
+"1. Confirm you have the right branch. Many restaurants share a name across cities and franchises. Match on address, phone number and Maps link together, not on name alone.",
+"2. If two candidates fit and you cannot separate them, stop and return only the identity_check block explaining the ambiguity, with candidate URLs. Do not guess.",
+"3. Never blend facts from a different branch, a similarly named business, or a closed location.",
+"",
+"PRICE RULES — the strictest part of this task",
+"4. A price may only be reported if you saw it on a page you can name: the restaurant's own site or PDF menu, its Google Business menu, or a delivery platform listing for this exact branch.",
+"5. Every menu item carries its own source_url and the date you saw it.",
+"6. Never estimate, average, convert or round a price. No 'approximately'. If the price is not published, leave price as null and set confidence to \"unverified\".",
+"7. Delivery platform prices are often marked up. If the price came from a delivery app, set price_context to \"delivery\" rather than \"dine-in\".",
+"8. State the currency once, as an ISO code, and use plain numbers for prices with no symbols.",
+"",
+"EVIDENCE RULES",
+"9. Best sellers and top-rated dishes must come from evidence: a menu badge, a platform's popularity label, or dishes named repeatedly in reviews. Record which of those it was in the evidence field, with a count where you have one.",
+"10. Quote nothing from reviews at length. Summarise the recurring praise and complaints in your own words, in short phrases.",
+"11. Anything you could not confirm goes in data_gaps, named specifically. An honest gap is worth more to me than a confident guess.",
+"",
+"OUTPUT FORMAT",
+"Return JSON only. No preamble, no commentary, no code fences. Use null for unknown values and [] for empty lists. Follow this shape exactly:",
+"",
+"{",
+'  "identity_check": { "confident": true, "matched_on": ["address","phone"], "ambiguity_note": null, "sources_checked": ["url"] },',
+'  "restaurant": {',
+'    "name": "", "tagline": null, "style": "", "cuisines": [], "price_band": null, "established_year": null,',
+'    "location": { "address_line": "", "neighborhood": null, "city": "", "country": "", "google_maps_url": null },',
+'    "hours_text": null,',
+'    "contact": { "phone": null, "landline": null, "whatsapp": null, "email": null, "website": null, "reservation_url": null },',
+'    "social": { "instagram": null, "facebook": null, "tiktok": null, "snapchat": null, "youtube": null, "x": null },',
+'    "description": "", "bio": "", "history": null,',
+'    "unique_selling_points": [], "audience": null,',
+'    "ratings": [ { "platform": "", "score": 0, "reviews_count": 0, "url": "", "checked_on": "' + today + '" } ],',
+'    "review_highlights": { "praised": [], "criticized": [] },',
+'    "most_reviewed_items": [], "best_sellers": [], "signature_items": [],',
+'    "visual_identity": { "interior_style": null, "plating_style": null, "lighting": null, "brand_colors": [], "logo_url": null },',
+'    "menu": {',
+'      "currency": "", "source_url": "", "last_verified": "' + today + '",',
+'      "categories": [',
+'        { "name": "", "items": [',
+'          { "name": "", "price": null, "price_context": "dine-in", "description": null,',
+'            "tags": [], "is_bestseller": false, "is_top_rated": false,',
+'            "evidence": null, "source_url": "", "confidence": "verified" } ] } ]',
+'    },',
+'    "data_gaps": []',
+'  }',
+"}",
+"",
+"CONFIDENCE VALUES",
+'Use "verified" only when you personally opened a page showing that price for this branch. Use "likely" when a reliable secondary listing shows it but the restaurant does not publish it. Use "unverified" when the price is absent — and set price to null.',
+"",
+"Before you send: re-read every price and confirm each one has a matching source_url. Drop any item you cannot source rather than filling it in."
+  ].join("\n");
+}
+
+$("#build").addEventListener("click", ()=>{
+  const raw = $("#raw").value;
+  $("#promptOut").textContent = buildPrompt(raw);
+  $("#promptCard").hidden = false;
+  scrollTo("#promptCard");
+});
+$("#clearRaw").addEventListener("click", ()=>{ $("#raw").value=""; $("#raw").focus(); });
+
+$("#copyPrompt").addEventListener("click", async ()=>{
+  const txt = $("#promptOut").textContent;
+  try{ await navigator.clipboard.writeText(txt); mark("#copyStatus","Copied. Paste it into your AI of choice.",true); }
+  catch(e){
+    const ta=document.createElement("textarea"); ta.value=txt; document.body.appendChild(ta);
+    ta.select(); document.execCommand("copy"); ta.remove();
+    mark("#copyStatus","Copied.",true);
+  }
+});
+function mark(sel,msg,ok){ const el=$(sel); el.textContent=msg; el.className="status "+(ok?"ok":"bad"); }
+
+/* ---------------- JSON in ---------------- */
+function extractJSON(text){
+  let t = text.trim().replace(/^```(?:json)?/i,"").replace(/```$/,"").trim();
+  const start = t.indexOf("{");
+  if(start<0) throw new Error("no JSON object found");
+  let depth=0, inStr=false, esc=false;
+  for(let i=start;i<t.length;i++){
+    const c=t[i];
+    if(inStr){ if(esc) esc=false; else if(c==="\\") esc=true; else if(c==='"') inStr=false; continue; }
+    if(c==='"') inStr=true;
+    else if(c==="{") depth++;
+    else if(c==="}"){ depth--; if(depth===0) return JSON.parse(t.slice(start,i+1)); }
+  }
+  throw new Error("the JSON looks cut off");
+}
+
+function applyData(obj){
+  const r = obj.restaurant || obj;
+  const set = (path,val)=>{ if(val!==undefined && val!==null && val!=="") put(S,path,flat(val)); };
+
+  set("name",r.name); set("style",r.style); set("cuisines",r.cuisines);
+  set("price_band",r.price_band); set("established_year",r.established_year); set("tagline",r.tagline);
+  ["address_line","city","neighborhood","country","google_maps_url"].forEach(k=> set("location."+k, r.location && r.location[k]));
+  set("hours_text", r.hours_text || r.hours);
+  ["phone","landline","whatsapp","email","website","reservation_url"].forEach(k=> set("contact."+k, r.contact && r.contact[k]));
+  ["instagram","facebook","tiktok","snapchat","youtube","x"].forEach(k=> set("social."+k, r.social && r.social[k]));
+  set("description",r.description); set("bio",r.bio); set("history",r.history);
+  set("unique_selling_points",r.unique_selling_points); set("audience",r.audience);
+  ["interior_style","plating_style","lighting","brand_colors"].forEach(k=> set("visual_identity."+k, r.visual_identity && r.visual_identity[k]));
+  if(Array.isArray(r.ratings) && r.ratings.length){
+    S.ratings_text = r.ratings.map(x=> [x.platform, x.score, x.reviews_count ? x.reviews_count+" reviews" : ""].filter(Boolean).join(" ")).join(" · ");
+  }
+  set("review_highlights.praised", r.review_highlights && r.review_highlights.praised);
+  set("review_highlights.criticized", r.review_highlights && r.review_highlights.criticized);
+  set("most_reviewed_items", r.most_reviewed_items || r.best_sellers);
+
+  const m = r.menu || {};
+  S.menu.currency = m.currency || "";
+  S.menu.source_url = m.source_url || "";
+  S.menu.last_verified = m.last_verified || "";
+  S.menu.categories = (m.categories||[]).map(c=>({
+    id: uid(), name: c.name || "",
+    items: (c.items||[]).map(it=>({
+      id: uid(),
+      name: it.name || "",
+      price: (it.price===null||it.price===undefined) ? "" : String(it.price),
+      description: it.description || "",
+      source_url: it.source_url || "",
+      confidence: ["verified","likely","unverified"].includes(it.confidence) ? it.confidence : "unverified",
+      bestseller: !!it.is_bestseller,
+      toprated: !!it.is_top_rated,
+      evidence: it.evidence || ""
+    }))
+  }));
+  if(!S.menu.categories.length) S.menu.categories = [{id:uid(),name:"",items:[blankItem()]}];
+
+  const gaps = (r.data_gaps||[]).length;
+  writeForm(); renderMenu(); validate();
+  go("s12");
+  toast(gaps ? ("Loaded. The research flagged " + gaps + " gap" + (gaps>1?"s":"") + " to fill in.") : "Loaded into the bio form.");
+}
+
+$("#loadJson").addEventListener("click", ()=>{
+  const txt = $("#jsonIn").value;
+  if(!txt.trim()){ mark("#jsonStatus","Paste the JSON first.",false); return; }
+  try{
+    const obj = extractJSON(txt);
+    if(obj.identity_check && obj.identity_check.confident === false && !obj.restaurant){
+      mark("#jsonStatus","The research could not confirm which branch this is. Add the address or phone number above and run it again.",false);
+      return;
+    }
+    mark("#jsonStatus","",true);
+    applyData(obj);
+  }catch(err){
+    mark("#jsonStatus","That did not parse — " + err.message + ".",false);
+  }
+});
+$("#skip").addEventListener("click", ()=>{
+  if(!S.menu.categories.length) S.menu.categories=[{id:uid(),name:"",items:[blankItem()]}];
+  renderMenu(); validate(); go("s12");
+});
+
+/* ---------------- Step 1.2 form ---------------- */
+function writeForm(){
+  $$("[data-k]").forEach(el=>{
+    const v = dig(S, el.dataset.k);
+    el.value = v==null ? "" : v;
+  });
+}
+$$("[data-k]").forEach(el=>{
+  el.addEventListener("input", ()=>{ put(S, el.dataset.k, el.value); if(el.dataset.k.startsWith("menu.")) validate(); });
+});
+
+function blankItem(){ return {id:uid(),name:"",price:"",description:"",source_url:"",confidence:"unverified",bestseller:false,toprated:false,evidence:""}; }
+
+function renderMenu(){
+  const host = $("#menu"); host.innerHTML = "";
+  S.menu.categories.forEach(cat=>{
+    const box = document.createElement("div"); box.className="cat";
+    const head = document.createElement("div"); head.className="cat-head";
+    head.innerHTML = '<input placeholder="Section name — Grills, Mezze, Drinks" value="'+esc(cat.name)+'">';
+    const addI = document.createElement("button"); addI.className="ghost tiny"; addI.textContent="Add dish";
+    const delC = document.createElement("button"); delC.className="ghost tiny danger"; delC.textContent="Remove section";
+    head.append(addI, delC); box.appendChild(head);
+    $("input",head).addEventListener("input", e=>{ cat.name=e.target.value; });
+    addI.addEventListener("click", ()=>{ cat.items.push(blankItem()); renderMenu(); validate(); });
+    delC.addEventListener("click", ()=>{
+      S.menu.categories = S.menu.categories.filter(c=>c.id!==cat.id);
+      if(!S.menu.categories.length) S.menu.categories=[{id:uid(),name:"",items:[blankItem()]}];
+      renderMenu(); validate();
+    });
+
+    const hdr = document.createElement("div"); hdr.className="itemhead";
+    hdr.innerHTML = "<span>Dish</span><span>Price</span><span>Description</span><span>Where the price came from</span><span>Confidence</span><span></span>";
+    box.appendChild(hdr);
+
+    cat.items.forEach(it=>{
+      const row = document.createElement("div"); row.className="item"; row.dataset.id=it.id;
+      row.innerHTML =
+        '<input data-f="name" placeholder="Mixed grill" value="'+esc(it.name)+'">' +
+        '<input data-f="price" inputmode="decimal" placeholder="0.00" value="'+esc(it.price)+'">' +
+        '<input data-f="description" placeholder="Optional" value="'+esc(it.description)+'">' +
+        '<input data-f="source_url" placeholder="https://" value="'+esc(it.source_url)+'">' +
+        '<select data-f="confidence">' +
+          opt("unverified","Unverified",it.confidence) +
+          opt("likely","Likely",it.confidence) +
+          opt("verified","Verified",it.confidence) +
+        '</select>' +
+        '<button class="ghost tiny danger" data-f="del">Remove</button>' +
+        '<div class="flags">' +
+          '<label><input type="checkbox" data-f="bestseller"'+(it.bestseller?" checked":"")+'> Best seller</label>' +
+          '<label><input type="checkbox" data-f="toprated"'+(it.toprated?" checked":"")+'> Top rated in reviews</label>' +
+          '<label style="flex:1;min-width:200px">Evidence <input data-f="evidence" style="padding:3px 7px" placeholder="Named in 40+ reviews" value="'+esc(it.evidence)+'"></label>' +
+        '</div>';
+      box.appendChild(row);
+
+      $$("[data-f]",row).forEach(el=>{
+        const f = el.dataset.f;
+        if(f==="del"){ el.addEventListener("click", ()=>{ cat.items = cat.items.filter(x=>x.id!==it.id); renderMenu(); validate(); }); return; }
+        const ev = el.type==="checkbox" ? "change" : "input";
+        el.addEventListener(ev, ()=>{ it[f] = el.type==="checkbox" ? el.checked : el.value; validate(); });
+      });
+    });
+    host.appendChild(box);
+  });
+}
+function opt(v,label,cur){ return '<option value="'+v+'"'+(cur===v?" selected":"")+'>'+label+'</option>'; }
+function esc(s){ return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;"); }
+
+$("#addCat").addEventListener("click", ()=>{ S.menu.categories.push({id:uid(),name:"",items:[blankItem()]}); renderMenu(); });
+
+/* ---------------- the accuracy gate ---------------- */
+function validate(){
+  /* Advisory only. Nothing here ever blocks Step 2 — it just shows how much
+     material the script writer has to work with, and which prices are safe
+     to put on screen. */
+  const thin = [];      // fields that would make a richer script
+  const priceNotes = []; // dishes whose price is not safe to caption yet
+
+  if(!S.name.trim()) thin.push("restaurant name");
+  if(!S.style.trim()) thin.push("style");
+  if(!S.location.city.trim()) thin.push("city");
+  if(!(S.description.trim()||S.bio.trim())) thin.push("description or bio");
+  if(!S.visual_identity.interior_style.trim() && !S.visual_identity.lighting.trim()) thin.push("how the place looks");
+  if(!Object.values(S.social).some(v=>String(v).trim())) thin.push("a social channel");
+
+  const real = S.menu.categories.flatMap(c=> c.items.map(i=>({i,c}))).filter(x=> x.i.name.trim());
+  let priced = 0, safe = 0;
+
+  $$("#menu .item").forEach(r=> r.classList.remove("flagged"));
+  real.forEach(({i,c})=>{
+    const hasPrice = String(i.price).trim() && !isNaN(parseFloat(i.price));
+    const sourced  = /^https?:\/\//i.test(i.source_url.trim());
+    if(hasPrice) priced++;
+    if(hasPrice && sourced && i.confidence==="verified"){ safe++; return; }
+    if(!hasPrice) return; // no price at all is fine — it simply won't appear on screen
+    const where = (c.name.trim()? c.name.trim()+" · " : "") + i.name.trim();
+    priceNotes.push(where + " — " + (sourced ? "marked " + i.confidence : "no source link") + ".");
+    const row = $('#menu .item[data-id="'+i.id+'"]'); if(row) row.classList.add("flagged");
+  });
+
+  /* completeness is a rough signal, not a score to chase */
+  const filled = [S.name,S.style,S.location.city,S.description||S.bio,S.history,
+                  S.visual_identity.interior_style||S.visual_identity.lighting,
+                  S.ratings_text,S.most_reviewed_items,
+                  Object.values(S.social).find(v=>String(v).trim())||"",
+                  real.length?"y":""].filter(v=>String(v).trim()).length;
+  const pct = Math.round(filled/10*100);
+
+  const g = $("#gate");
+  const bar = '<div class="meter"><span style="width:'+pct+'%"></span></div>';
+  let body = "<h3>What the script has to work with</h3>" + bar +
+    "<p style='margin:0;font-size:13.5px;color:var(--ink-soft)'>" +
+    real.length + " dishes" + (priced? ", " + priced + " with a price" : "") +
+    (safe ? ", " + safe + " safe to show on screen" : "") + ". Move on whenever you like — gaps are fine.</p>";
+
+  if(thin.length){
+    body += "<p style='margin:12px 0 0;font-size:13.5px'>Worth adding if you have it: " + esc(thin.join(", ")) + ".</p>";
+  }
+  if(priceNotes.length){
+    body += "<p style='margin:12px 0 0;font-size:13.5px'>These prices are not confirmed, so I'll keep them out of on-screen text and captions unless you mark them verified:</p><ul>" +
+      priceNotes.slice(0,8).map(p=>"<li>"+esc(p)+"</li>").join("") +
+      (priceNotes.length>8 ? "<li>and "+(priceNotes.length-8)+" more</li>" : "") + "</ul>";
+  }
+  g.className = "gate" + (!thin.length && !priceNotes.length && real.length ? " clear" : "");
+  g.innerHTML = body;
+  return true;
+}
+
+/* ---------------- output ---------------- */
+function brief(){
+  return {
+    schema_version:"1.0",
+    generated_on: new Date().toISOString().slice(0,10),
+    restaurant:{
+      name:S.name, tagline:S.tagline, style:S.style,
+      cuisines: split(S.cuisines), price_band:S.price_band, established_year:S.established_year,
+      location:S.location, hours_text:S.hours_text, contact:S.contact, social:S.social,
+      description:S.description, bio:S.bio, history:S.history,
+      unique_selling_points: split(S.unique_selling_points), audience:S.audience,
+      visual_identity:{
+        interior_style:S.visual_identity.interior_style,
+        plating_style:S.visual_identity.plating_style,
+        lighting:S.visual_identity.lighting,
+        brand_colors: split(S.visual_identity.brand_colors)
+      },
+      ratings_text:S.ratings_text,
+      review_highlights:{ praised:split(S.review_highlights.praised), criticized:split(S.review_highlights.criticized) },
+      most_reviewed_items: split(S.most_reviewed_items),
+      menu:{
+        currency:S.menu.currency, source_url:S.menu.source_url, last_verified:S.menu.last_verified,
+        categories:S.menu.categories.filter(c=> c.items.some(i=>i.name.trim())).map(c=>({
+          name:c.name,
+          items:c.items.filter(i=>i.name.trim()).map(i=>({
+            name:i.name, price: parseFloat(i.price), description:i.description || null,
+            is_bestseller:i.bestseller, is_top_rated:i.toprated,
+            evidence:i.evidence || null, source_url:i.source_url, confidence:i.confidence
+          }))
+        }))
+      }
+    }
+  };
+}
+function split(s){ return String(s||"").split(",").map(x=>x.trim()).filter(Boolean); }
+
+$("#copyOut").addEventListener("click", async ()=>{
+  const txt = JSON.stringify(brief(),null,2);
+  try{ await navigator.clipboard.writeText(txt); mark("#outStatus","Brief copied.",true); }
+  catch(e){ mark("#outStatus","Copy blocked here — use Download instead.",false); }
+});
+$("#dlOut").addEventListener("click", ()=>{
+  const blob = new Blob([JSON.stringify(brief(),null,2)],{type:"application/json"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = (S.name.trim().toLowerCase().replace(/[^a-z0-9]+/g,"-") || "restaurant") + "-brief.json";
+  a.click(); URL.revokeObjectURL(a.href);
+  mark("#outStatus","Downloaded.",true);
+});
+$("#loadFileBtn").addEventListener("click", ()=> $("#loadFile").click());
+$("#loadFile").addEventListener("change", e=>{
+  const f = e.target.files[0]; if(!f) return;
+  const rd = new FileReader();
+  rd.onload = ()=>{ try{ applyData(JSON.parse(rd.result)); }catch(err){ mark("#outStatus","That file did not parse.",false); } };
+  rd.readAsText(f); e.target.value="";
+});
+$("#toStep2").addEventListener("click", ()=> go("s2"));
+
+/* ================= CAMPAIGN BRIEF + TEMPLATE ENGINE ================= */
+
+const C = {
+  objective:"awareness", platform:"reels", target_secs:25, tone:"appetite",
+  language:"", cta:"", offer_text:"", must_include:"", avoid:"",
+  model:"omni", max_clip:10, aspect:"9:16", mode:"hybrid"
+};
+$$("[data-c]").forEach(el=>{
+  el.addEventListener("input", ()=>{
+    C[el.dataset.c] = (el.dataset.c==="target_secs"||el.dataset.c==="max_clip") ? Number(el.value)||0 : el.value;
+    if(el.dataset.c==="model"){
+      C.max_clip = M().clip; $("#c_clip").value = C.max_clip;
+      renderModelNote();
+    }
+    if(TPL.chosen) fitSlots();
+  });
+});
+
+/* ---- what each engine can actually do, and what that means for the prompt ---- */
+const MODELS = {
+  omni:{
+    label:"Gemini Omni 1.1 Flash", clip:10, audio:true, refs:7, frames:true, extend:true,
+    good:["Native synchronised audio — ambience, sizzle and music come out of the same pass, no separate sound job",
+          "Up to 7 reference images per call, so the same dish and the same room carry across every shot",
+          "First and last frame can both be pinned, which turns a transition into one generation instead of a lucky cut",
+          "Scene extension in 10-second increments, reading up to 10s of the existing clip for continuity",
+          "360p draft mode is far cheaper and faster — block the whole reel rough, upscale only what survives"],
+    bad:["1080p and 4K are upscaled, not generated natively, so fine plate detail can soften",
+         "Per-second pricing means long slots get expensive fast — draft at 360p first",
+         "Native audio will invent dialogue if you leave the audio direction vague",
+         "Reference images steer hard: a badly lit source photo drags the whole shot toward it"],
+    prompting:["Write one audio line per shot or the model will improvise speech",
+               "Attach the same reference set to every call — that is what holds the look together",
+               "Chain shots with the last frame of the previous clip as the first frame of the next",
+               "Draft at 360p, review the cut, then re-run only the keepers at 1080p"]
+  },
+  veo:{label:"Veo 3.1", clip:8, audio:true, refs:3, frames:true, extend:true,
+    good:["Native audio","Strong physical realism on food and liquid","Last-frame control for chaining"],
+    bad:["Short clip ceiling","Tighter reference image budget than Omni"],
+    prompting:["One audio line per shot","Keep camera direction to a single move per clip"]},
+  kling:{label:"Kling", clip:10, audio:false, refs:4, frames:true, extend:true,
+    good:["Long clips","Good motion on human hands","Start and end frame control"],
+    bad:["No native audio, sound is a separate job","Colour drifts between generations"],
+    prompting:["Restate the full style lock every shot, drift is worse here","Plan a separate audio pass"]},
+  runway:{label:"Runway", clip:10, audio:false, refs:3, frames:false, extend:false,
+    good:["Reliable image-to-video","Clean camera moves"],
+    bad:["No native audio","Weaker at long continuous motion"],
+    prompting:["Lead with the source image, keep the text short and about motion only"]},
+  sora:{label:"Sora", clip:12, audio:true, refs:2, frames:false, extend:true,
+    good:["Longest single clips here","Strong scene coherence"],
+    bad:["Fewer reference slots","Less direct camera control"],
+    prompting:["Describe the scene as a whole rather than a camera move"]},
+  hailuo:{label:"Hailuo / MiniMax", clip:6, audio:false, refs:3, frames:false, extend:false,
+    good:["Fast and cheap","Punchy motion suited to fast cuts"],
+    bad:["Six second ceiling breaks longer beats","No native audio"],
+    prompting:["Split any beat over 6s into two shots before generating"]},
+  seedance:{label:"Seedance", clip:10, audio:false, refs:4, frames:true, extend:false,
+    good:["Good multi-shot consistency","Solid food texture"],
+    bad:["No native audio"],
+    prompting:["Use the reference images aggressively, it follows them closely"]},
+  other:{label:"Your model", clip:8, audio:false, refs:3, frames:false, extend:false,
+    good:["Set the clip ceiling by hand above"],bad:["Capabilities unknown to this tool"],
+    prompting:["Prompts are written conservatively: full style lock restated every shot"]}
+};
+function M(){ return MODELS[C.model] || MODELS.other; }
+
+function renderModelNote(){
+  const m = M();
+  $("#modelNote").innerHTML =
+    "<h3>"+esc(m.label)+"</h3>" +
+    "<p style='margin:0 0 8px;font-size:13.5px;color:var(--ink-soft)'>" +
+      m.clip+"s per clip · "+(m.audio?"native audio":"silent, needs an audio pass")+" · "+
+      m.refs+" reference images · "+(m.frames?"first and last frame control":"no frame pinning")+"</p>" +
+    "<p style='margin:0 0 4px;font-size:13.5px'><b>Plays to</b></p><ul>" +
+      m.good.map(x=>"<li>"+esc(x)+"</li>").join("") + "</ul>" +
+    "<p style='margin:10px 0 4px;font-size:13.5px'><b>Watch for</b></p><ul>" +
+      m.bad.map(x=>"<li>"+esc(x)+"</li>").join("") + "</ul>";
+}
+function sl(role,dur,shot,asset,overlay,vo){ return {role,dur,shot,asset,overlay,vo}; }
+
+const ROLE_LABEL = {
+  hook:["Hook","first 2 seconds, stop the scroll"],
+  establish:["Establish","where we are"],
+  ambience:["Ambience","the room breathing"],
+  prep:["Prep","hands making it"],
+  hero:["Hero dish","the one they came for"],
+  beat:["Dish beat","supporting plate"],
+  human:["Human moment","someone eating, no faces needed"],
+  proof:["Proof","rating, queue, or review"],
+  offer:["Offer","the deal on screen"],
+  cta:["Call to action","what to do next"]
+};
+
+const ASSET_INFO = {
+  dish:     ["Dish photo","Straight overhead and 45°, natural light, no flash, plate filling the frame."],
+  exterior: ["Exterior","Storefront at dusk with the lights on, shot straight on from across the street."],
+  interior: ["Interior","Wide of the dining room, lights at service level, a few tables dressed."],
+  kitchen:  ["Kitchen or pass","The grill, oven or pass mid-service. Motion and heat are the point."],
+  staff:    ["Hands at work","Hands only unless you have signed releases. Plating, pouring, wrapping."],
+  drink:    ["Drink","Backlit if possible, condensation and ice visible."],
+  dessert:  ["Dessert","Same as dish, plus one shot mid-spoon."],
+  delivery: ["Packaging","The bag, box and branded sleeve on a clean surface."],
+  logo:     ["Logo file","Vector or transparent PNG. Never generated — composited in post."],
+  none:     ["Fully generated","No client asset needed for this slot."]
+};
+
+const TEMPLATES = [
+  { id:"slow-burn", name:"Slow Burn", base:26,
+    obj:["awareness","story","dish"], tone:["premium","moody"], styles:["Fine dining","Steakhouse","Seafood house","Casual dining"],
+    why:"Long lenses, almost no cuts, one dish carried the whole way. Reads expensive because it refuses to hurry.",
+    look:{lens:"85mm macro and 50mm, T1.8, shallow throughout",film:"Large-format digital, ARRI-like colour science",grade:"Warm shadows, amber highlights, deep neutral blacks, low contrast curve",light:"Single warm key at 2900K from frame left, heavy negative fill, practical bokeh behind",grain:"Fine 35mm grain, subtle halation on highlights",motion:"Slow push-ins and lateral drifts only, 3–5cm per second, always on a slider"},
+    slots:[
+      sl("hook",3,"Extreme macro, slow push-in on steam lifting off the plate. Focus lands on one edge of the food.","dish",{t:"hook",max:24},"0"),
+      sl("establish",3,"Slow lateral drift through the darkened dining room, candle and pendant bokeh in the foreground.","interior",null,"7-9"),
+      sl("prep",4,"Chef's hands at the pass finishing the plate, wrist height, shallow focus on the fingertips.","kitchen",null,"8-11"),
+      sl("hero",5,"Slow 45° orbit around the hero dish on a dark surface, one hard highlight travelling across the glaze.","dish",{t:"line",max:28},"9-12"),
+      sl("beat",3,"Top-down, sauce or oil poured in a thin line across the second dish.","dish",null,"6-8"),
+      sl("human",3,"Guest lifting a fork into frame, face out of shot, warm window light behind.","none",null,"6-8"),
+      sl("cta",5,"Locked-off wide of the storefront at blue hour, warm windows, no camera move.","exterior",{t:"cta",max:30},"7-10")
+    ]},
+
+  { id:"flame", name:"Flame and Char", base:22,
+    obj:["awareness","dish","delivery"], tone:["appetite","street"], styles:["Steakhouse","Casual dining","Fast casual","Food truck","Buffet"],
+    why:"Fire, smoke and sizzle cut hard on the beat. The loudest template here and the best performer on cold audiences.",
+    look:{lens:"35mm and 24mm close, T2.8, slight barrel distortion kept",film:"High-shutter digital, crisp motion, no smear",grade:"Orange and deep teal split, crushed blacks, high micro-contrast, saturated reds",light:"Firelight as the key, hard rim from a cool source behind the smoke",grain:"Light grain, visible sparks and airborne ash as texture",motion:"Handheld with weight, quick whip pans, one snap zoom per cut"},
+    slots:[
+      sl("hook",2.5,"Flames leap up around the grill bars, whip pan into the meat as fat drips and ignites.","kitchen",{t:"hook",max:22},"0"),
+      sl("prep",3.5,"Tongs turn the cut, char marks catch the light, smoke crosses the lens.","kitchen",null,"6-9"),
+      sl("hero",4,"Handheld orbit around the finished platter as it lands on the table, steam rolling off it.","dish",{t:"line",max:26},"8-11"),
+      sl("beat",3,"Knife through the cut, juice pulls across the board in macro.","dish",null,"6-8"),
+      sl("beat",3,"Flatbread or side torn by hand, straight into the sauce.","dish",null,"6-8"),
+      sl("human",3,"Bite taken at the table, hands and jaw only, everything else soft.","none",null,"5-7"),
+      sl("cta",3,"Push in on the storefront sign at night, grill glow spilling onto the pavement.","exterior",{t:"cta",max:30},"6-9")
+    ]},
+
+  { id:"doors-open", name:"Doors Open", base:24,
+    obj:["opening","awareness","event"], tone:["warm","appetite"], styles:["Casual dining","Café / Coffee shop","Fast casual","Bakery / Patisserie","Fine dining"],
+    why:"Built for a first look: outside, through the door, into the room, onto the table. Answers what and where before it sells anything.",
+    look:{lens:"24mm wide for the walk-in, 50mm for the tables, T2.8",film:"Clean digital, natural colour, no stylisation",grade:"Bright and open, lifted blacks, true whites, gentle warmth in the skin range",light:"Daylight-balanced ambient plus warm practicals left visibly warmer",grain:"Almost none, a whisper only",motion:"Continuous forward gimbal move as if walking in, one unbroken direction of travel"},
+    slots:[
+      sl("hook",3,"Push through the open door from outside, exterior light falling away as the room opens up.","exterior",{t:"hook",max:24},"0"),
+      sl("establish",3.5,"Gimbal glide through the room at chest height, tables dressed, staff moving in the background.","interior",null,"8-10"),
+      sl("ambience",3,"Detail rack focus: cutlery, menu edge, a pendant lamp, the counter grain.","interior",null,"6-8"),
+      sl("prep",3.5,"Behind the counter or pass, the signature thing being made.","kitchen",null,"7-9"),
+      sl("hero",4,"The signature dish set down on the table, camera settling with it.","dish",{t:"line",max:28},"8-11"),
+      sl("human",3,"Two people at a table mid-conversation, shot past a shoulder, faces soft.","none",null,"6-8"),
+      sl("cta",4,"Slow pull back from the table to reveal the room, then hold.","interior",{t:"cta",max:32},"7-10")
+    ]},
+
+  { id:"one-dish", name:"One Dish, Start to Finish", base:20,
+    obj:["dish","awareness","story"], tone:["appetite","premium","warm"], styles:["Fast casual","Casual dining","Bakery / Patisserie","Dessert shop","Café / Coffee shop","Fine dining"],
+    why:"Raw ingredient to first bite on a single dish. The most reliable format there is for a new menu item.",
+    look:{lens:"100mm macro throughout, T2.8, tight and tactile",film:"Clean digital with a soft filtration, highlights allowed to bloom",grade:"Rich mids, warm neutrals, ingredient colours pushed slightly",light:"Soft top light through diffusion, one bounce card, no visible hard shadow",grain:"Minimal, texture comes from the food not the stock",motion:"Locked-off frames alternating with slow top-down drops, cuts on the action"},
+    slots:[
+      sl("hook",2.5,"Macro on the raw ingredient hitting the board, flour or water spraying in slow motion.","none",{t:"hook",max:22},"0"),
+      sl("prep",3.5,"Hands working the ingredient, top-down, board filling the frame.","staff",null,"7-9"),
+      sl("prep",3.5,"The heat step: pan, oven, grill or fryer, the moment it transforms.","kitchen",null,"7-9"),
+      sl("hero",4,"Finished dish drops into frame from above and settles, garnish falling last.","dish",{t:"line",max:26},"8-11"),
+      sl("beat",3,"Cheese pull, sauce break or steam release in macro.","dish",null,"6-8"),
+      sl("cta",3.5,"Hand lifts the first piece out of frame toward camera.","dish",{t:"cta",max:30},"6-9")
+    ]},
+
+  { id:"offer-drop", name:"Offer Drop", base:18,
+    obj:["offer","delivery","event"], tone:["appetite","street"], styles:["Fast food","Fast casual","Food truck","Cloud kitchen","Buffet","Dessert shop"],
+    why:"Price-led and fast. The number appears in the first second and never leaves the screen for long.",
+    look:{lens:"35mm, T4, deeper focus so the whole spread reads at a glance",film:"Punchy digital, high shutter, no motion blur",grade:"High saturation, bright clean whites, brand colour pushed hardest",light:"Broad soft key, near-shadowless, food lit to look abundant",grain:"None, poster-clean",motion:"Snap cuts on the beat, quick top-down reveals, one whip transition"},
+    slots:[
+      sl("hook",2,"Top-down snap reveal of the full spread landing on the table all at once.","dish",{t:"offer",max:20},"0"),
+      sl("beat",2.5,"Fast macro pass across three items in a row, one cut each.","dish",null,"5-7"),
+      sl("beat",2.5,"The bundle assembled: tray, box or platter filling the frame.","dish",null,"5-7"),
+      sl("hero",3.5,"Hero item lifted out of the bundle, sauce or cheese stretching.","dish",{t:"price",max:18},"7-9"),
+      sl("proof",3,"Queue at the counter or a full table, shot wide and busy.","interior",null,"6-8"),
+      sl("offer",2.5,"Clean plate-out on brand colour, offer card composited in post.","logo",{t:"offer",max:34},"5-7"),
+      sl("cta",2,"Storefront or delivery bag, held two beats.","delivery",{t:"cta",max:28},"4-6")
+    ]},
+
+  { id:"late-night", name:"Late Night Craving", base:20,
+    obj:["delivery","awareness","offer"], tone:["moody","street","appetite"], styles:["Fast food","Cloud kitchen","Food truck","Fast casual","Dessert shop","Bar / Lounge"],
+    why:"Neon, night and packaging. Made for the 11pm delivery scroll rather than the lunch decision.",
+    look:{lens:"35mm anamorphic-style, T2, flares allowed",film:"Low-light digital, noise embraced not fought",grade:"Magenta and cyan neon spill, deep blacks, warm food against cool surroundings",light:"Practical neon and signage as the key, phone screen glow as fill",grain:"Heavy but fine, visible in the shadows",motion:"Handheld, slight drift, rack focus between foreground neon and the food"},
+    slots:[
+      sl("hook",2.5,"Neon sign reflected in a wet surface, rack focus to the food in the foreground.","none",{t:"hook",max:22},"0"),
+      sl("establish",3,"Counter at night, steam rising, city dark through the window behind.","interior",null,"6-8"),
+      sl("prep",3.5,"The order assembled fast under service lights, wrapping and boxing.","kitchen",null,"7-9"),
+      sl("hero",4,"Wrapper opens to reveal the hero item, warm light hitting it as it unfolds.","dish",{t:"line",max:26},"8-11"),
+      sl("beat",3,"First bite, steam escaping, shot tight and handheld.","none",null,"6-8"),
+      sl("cta",4,"Delivery bag handed over at a doorway, or set down on a table beside a phone.","delivery",{t:"cta",max:30},"7-10")
+    ]},
+
+  { id:"morning", name:"Morning Ritual", base:22,
+    obj:["awareness","story","dish"], tone:["warm","premium"], styles:["Café / Coffee shop","Bakery / Patisserie","Cafeteria","Juice / Smoothie bar","Dessert shop"],
+    why:"Soft daylight, steam and pour shots. Sells a time of day and a habit rather than a single product.",
+    look:{lens:"50mm and 85mm, T2, gentle and observational",film:"Clean digital with a light diffusion filter, soft highlight roll-off",grade:"Airy, low saturation, warm whites, pale wood and ceramic tones held true",light:"Large window as the only source, sheer diffusion, long soft shadows across the table",grain:"Fine and even, film-like",motion:"Static frames with life moving inside them, one slow push per sequence"},
+    slots:[
+      sl("hook",3,"Steam rising off a cup in a shaft of morning window light, everything else still.","drink",{t:"hook",max:24},"0"),
+      sl("prep",3.5,"The pour: milk, coffee or batter, shot at surface level in macro.","drink",null,"7-9"),
+      sl("beat",3.5,"Pastry or bake pulled apart by hand, crumb and layers visible.","dish",null,"7-9"),
+      sl("ambience",3,"Room detail: light across a table edge, chair, shelf, hands around a cup.","interior",null,"6-8"),
+      sl("hero",4,"The full set-down on the table, cup and plate together, camera pushing in slowly.","dish",{t:"line",max:28},"8-11"),
+      sl("cta",5,"Wide of the café through the front window from outside, people inside, morning light.","exterior",{t:"cta",max:32},"8-11")
+    ]},
+
+  { id:"family-table", name:"The Family Table", base:24,
+    obj:["awareness","event","story","offer"], tone:["warm","appetite"], styles:["Casual dining","Buffet","Cafeteria","Fast casual","Seafood house","Steakhouse"],
+    why:"Abundance and sharing. Built around a full table rather than a single plate, which is how family restaurants actually sell.",
+    look:{lens:"28mm for the table wides, 50mm for details, T2.8",film:"Warm clean digital, natural skin tones protected",grade:"Golden warmth, generous mids, nothing crushed, food reading bright and plentiful",light:"Warm overhead practicals plus soft ambient fill, no hard shadows across the plates",grain:"Light, unobtrusive",motion:"Slow rise and boom-down over the table, gentle handheld for the hands"},
+    slots:[
+      sl("hook",3,"Boom down over a fully loaded table, dishes filling the frame edge to edge.","dish",{t:"hook",max:24},"0"),
+      sl("beat",3,"Hands reaching in from several directions, serving and passing.","none",null,"6-8"),
+      sl("hero",4,"The centrepiece dish set down in the middle, everyone's hands pulling back.","dish",{t:"line",max:28},"8-11"),
+      sl("beat",3,"Rice, bread or sides scooped in macro, steam rising.","dish",null,"6-8"),
+      sl("human",3.5,"Table laughing, shot from the end of the table, faces soft or cropped.","none",null,"7-9"),
+      sl("ambience",3,"Room wide, other tables full, warm and busy.","interior",null,"6-8"),
+      sl("cta",4.5,"Pull back to the storefront or entrance, family walking in.","exterior",{t:"cta",max:32},"7-10")
+    ]},
+
+  { id:"proof-stack", name:"The Proof Stack", base:22,
+    obj:["awareness","offer","delivery"], tone:["appetite","street","warm"], styles:["Fast casual","Casual dining","Fast food","Cloud kitchen","Steakhouse","Seafood house"],
+    why:"Reviews and ratings carried over food footage. Best when the restaurant already has strong numbers worth putting on screen.",
+    look:{lens:"35mm and 85mm mixed, T2.8",film:"Clean digital, neutral, so the overlays stay readable",grade:"Balanced and bright, slightly desaturated backgrounds so text holds contrast",light:"Even soft key, deliberately simple, overlays are the hero",grain:"None",motion:"Steady slow moves under the text, nothing that fights the reading"},
+    slots:[
+      sl("hook",2.5,"Hero dish in macro with a wide clean area of frame left for the rating overlay.","dish",{t:"proof",max:26},"0"),
+      sl("beat",3,"Slow drift across a second dish, lower third kept empty for text.","dish",{t:"proof",max:40},"6-8"),
+      sl("beat",3,"Third dish, same treatment, different angle.","dish",{t:"proof",max:40},"6-8"),
+      sl("proof",3.5,"Busy room or queue, shot wide, proving the crowd is real.","interior",{t:"proof",max:30},"7-9"),
+      sl("hero",4,"The most reviewed dish, full macro orbit, no overlay so it breathes.","dish",null,"8-11"),
+      sl("human",3,"Bite and reaction, hands and mouth only.","none",null,"6-8"),
+      sl("cta",3,"Storefront or logo plate-out with the rating composited beside it.","exterior",{t:"cta",max:30},"6-9")
+    ]}
+];
+
+const TPL = { chosen:null, showAll:false };
+
+/* ---- ranking ---- */
+function scoreTemplate(t){
+  let s = 0; const why = [];
+  if(t.obj.includes(C.objective)){ s += 45; why.push("built for this objective"); }
+  if(t.tone.includes(C.tone)){ s += 25; why.push("matches the tone"); }
+  if(S.style && t.styles.includes(S.style)){ s += 20; why.push("suits a " + S.style.toLowerCase()); }
+  const gap = Math.abs(t.base - C.target_secs);
+  s += Math.max(0, 12 - gap);
+  if(gap <= 3) why.push("close to your length");
+  if(C.offer_text.trim() && t.slots.some(x=>x.role==="offer")) { s += 8; why.push("has an offer card"); }
+  const dishes = countDishes();
+  const needed = t.slots.filter(x=>x.asset==="dish").length;
+  if(dishes && dishes < needed) s -= (needed - dishes) * 4;
+  return {score:s, why:why.slice(0,3)};
+}
+function countDishes(){ return S.menu.categories.flatMap(c=>c.items).filter(i=>i.name.trim()).length; }
+
+function renderTemplates(){
+  const ranked = TEMPLATES.map(t=>({t, ...scoreTemplate(t)})).sort((a,b)=> b.score-a.score);
+  const list = TPL.showAll ? ranked : ranked.slice(0,3);
+  $("#recTitle").textContent = TPL.showAll ? "All templates, best match first" : "Recommended for this brief";
+  $("#showAll").textContent = TPL.showAll ? "Show top three only" : "Show all templates";
+  $("#tgrid").innerHTML = list.map((r,i)=>{
+    const shots = r.t.slots.length;
+    const rank = (!TPL.showAll && i===0) ? '<span class="rank">Best match</span>' : "";
+    return '<button class="tcard" data-t="'+r.t.id+'" aria-pressed="'+(TPL.chosen&&TPL.chosen.id===r.t.id)+'">' +
+      '<span class="tthumb"><img src="thumbs/'+r.t.id+'.jpg" alt="" onerror="this.remove()">' +
+      '<span class="ph">'+esc(r.t.name.toLowerCase().replace(/ /g,"_"))+'</span></span>' +
+      '<span class="tbody">' + rank +
+        "<h3>"+esc(r.t.name)+"</h3>" +
+        '<span class="spec">'+shots+" shots · "+r.t.base+"s as written</span>" +
+        '<span class="why">'+esc(r.t.why)+"</span>" +
+        '<span class="fit">'+esc(r.why.length? r.why.join(" · ") : "workable, not the obvious pick")+"</span>" +
+      "</span></button>";
+  }).join("");
+  $$("#tgrid .tcard").forEach(b=> b.addEventListener("click", ()=> chooseTemplate(b.dataset.t)));
+}
+$("#showAll").addEventListener("click", ()=>{ TPL.showAll = !TPL.showAll; renderTemplates(); });
+$("#toTemplates").addEventListener("click", ()=> go("s3"));
+
+/* ---- choosing and fitting ---- */
+function chooseTemplate(id){
+  const t = TEMPLATES.find(x=>x.id===id); if(!t) return;
+  TPL.chosen = { id:t.id, name:t.name, look:t.look, why:t.why,
+                 slots: t.slots.map((s,i)=> Object.assign({}, s, {n:i+1, dur:s.dur, locked:false})) };
+  fitSlots(); renderTemplates();
+  $("#tdetail").hidden = false;
+  $("#tdName").textContent = t.name;
+  $("#tdNote").textContent = t.why + " Adjust any slot length by hand — the totals update as you go.";
+  scrollTo("#tdetail");
+}
+
+function fitSlots(){
+  if(!TPL.chosen) return;
+  const t = TEMPLATES.find(x=>x.id===TPL.chosen.id);
+  const base = t.slots.reduce((a,s)=>a+s.dur,0);
+  const k = (C.target_secs||base) / base;
+  TPL.chosen.slots.forEach((s,i)=>{
+    if(!s.locked) s.dur = Math.max(2, Math.round(t.slots[i].dur * k * 2) / 2);
+  });
+  renderSlots(); renderLock();
+}
+
+function renderSlots(){
+  const T = TPL.chosen; if(!T) return;
+  $("#slots").innerHTML = T.slots.map(s=>{
+    const [label,sub] = ROLE_LABEL[s.role] || [s.role,""];
+    const over = s.dur > C.max_clip;
+    const asset = ASSET_INFO[s.asset] ? ASSET_INFO[s.asset][0] : s.asset;
+    const ov = s.overlay ? " · text on screen, max "+s.overlay.max+" characters" : "";
+    return '<div class="slot'+(over?" over":"")+'">' +
+      '<span class="n">'+s.n+"</span>" +
+      '<span class="role">'+esc(label)+"<small>"+esc(sub)+"</small></span>" +
+      '<span class="desc"><b>'+esc(s.shot)+"</b><br>"+esc(asset)+esc(ov)+
+        (over? "<br><span style='color:var(--menu-red)'>Longer than one clip on this model — split it into two shots.</span>":"")+"</span>" +
+      '<span class="dur"><input type="number" step="0.5" min="1" value="'+s.dur+'" data-slot="'+s.n+'"> s</span>' +
+    "</div>";
+  }).join("");
+  $$("#slots input[data-slot]").forEach(inp=>{
+    inp.addEventListener("input", ()=>{
+      const s = T.slots.find(x=>x.n===Number(inp.dataset.slot));
+      s.dur = Number(inp.value)||2; s.locked = true;
+      renderTally();
+      inp.closest(".slot").classList.toggle("over", s.dur > C.max_clip);
+    });
+  });
+  renderTally();
+}
+
+function renderTally(){
+  const T = TPL.chosen; if(!T) return;
+  const total = T.slots.reduce((a,s)=>a+s.dur,0);
+  const words = T.slots.reduce((a,s)=>{
+    const m = String(s.vo).match(/(\d+)-(\d+)/); return a + (m? Number(m[2]) : 0);
+  },0);
+  const over = T.slots.filter(s=> s.dur > C.max_clip).length;
+  $("#tally").innerHTML =
+    "<span>Runtime <b>"+total.toFixed(1)+"s</b> against a "+C.target_secs+"s target</span>" +
+    "<span>Shots <b>"+T.slots.length+"</b></span>" +
+    "<span>Voice-over ceiling <b>"+words+" words</b></span>" +
+    "<span>Clips over the "+C.max_clip+"s limit <b>"+over+"</b></span>";
+}
+
+function renderLock(){
+  const T = TPL.chosen; if(!T) return;
+  const colors = split(S.visual_identity.brand_colors);
+  const L = T.look;
+  const lines = [
+    "STYLE LOCK — paste identically into every shot prompt",
+    "",
+    "Lens: " + L.lens,
+    "Stock: " + L.film,
+    "Grade: " + L.grade,
+    "Light: " + L.light,
+    "Grain: " + L.grain,
+    "Motion: " + L.motion,
+    "Frame: " + C.aspect + ", 24fps, cinematic rather than commercial-slick",
+    colors.length ? "Brand colours to favour: " + colors.join(", ") : null,
+    S.visual_identity.interior_style ? "Room reference: " + S.visual_identity.interior_style : null,
+    S.visual_identity.plating_style ? "Serveware: " + S.visual_identity.plating_style : null,
+    "",
+    "Negative, every shot: no on-screen text, no logos, no lettering or signage copy,",
+    "no readable menus or price tags, no warped hands, no extra fingers, no faces in",
+    "focus without a release, no plastic-looking food, no oversaturated HDR look,",
+    "no stock-footage smiling, no floating objects, no duplicated cutlery.",
+    C.avoid.trim() ? "Also keep out: " + C.avoid.trim() : null
+  ].filter(Boolean);
+  $("#lock").textContent = lines.join("\n");
+  $("#setlock").textContent = setLock();
+  $("#setNote").textContent = C.mode==="fullai"
+    ? "The style lock pins the camera; this pins the place. Without it the model invents a new room every call, which is the single most common reason a fully generated reel looks like seven different restaurants. Fill in the look fields on Step 1.2 to make it specific — the vaguer this block, the more freedom the model takes."
+    : "Less critical when you are animating real photos, since the room comes from the source image. It still keeps the fully generated slots sitting in the same world as the shot ones.";
+}
+
+$("#copyLock").addEventListener("click", async ()=>{
+  try{ await navigator.clipboard.writeText($("#lock").textContent); mark("#lockStatus","Style lock copied.",true); }
+  catch(e){ mark("#lockStatus","Copy blocked — select the text and copy it manually.",false); }
+});
+$("#copyOut2").addEventListener("click", async ()=>{
+  try{ await navigator.clipboard.writeText(JSON.stringify(fullBrief(),null,2)); mark("#outStatus2","Full brief copied.",true); }
+  catch(e){ mark("#outStatus2","Copy blocked — use Download on Step 1.2.",false); }
+});
+$("#toAssets").addEventListener("click", ()=> go("s4"));
+
+/* ---- production mode ---- */
+$$(".mode").forEach(b=> b.addEventListener("click", ()=>{
+  C.mode = b.dataset.mode;
+  $$(".mode").forEach(x=> x.setAttribute("aria-pressed", String(x.dataset.mode===C.mode)));
+  renderModeNote();
+  if(TPL.chosen) renderLock();
+}));
+function renderModeNote(){
+  const m = M();
+  const el = $("#modeNote");
+  if(C.mode==="hybrid"){
+    el.className = "gate clear";
+    el.innerHTML = "<h3>Shoot and animate</h3><p style='margin:0;font-size:13.5px;color:var(--ink-soft)'>" +
+      "Each slot that needs a real subject gets built from a photo the restaurant sends, animated as image-to-video. " +
+      "Slower to start because you have to collect the images, and the result is defensible: the dining room on screen is their dining room, the mixed grill is their mixed grill." +
+      "</p>";
+  }else{
+    el.className = "gate";
+    el.innerHTML = "<h3>Fully generated</h3><p style='margin:0;font-size:13.5px;color:var(--ink-soft)'>" +
+      "No collection step, and you can deliver the same day. The trade is real: every dish and every room is invented. " +
+      "A customer who sees the reel and walks in is being shown a place that does not exist, which is a misrepresentation the restaurant carries, not you." +
+      "</p><p style='margin:10px 0 0;font-size:13.5px'>Safer ways to use it: texture and macro shots where nothing identifiable appears, a brand-new venue that genuinely has no photography yet, or a mood piece the client has signed off as illustrative. " +
+      (m.refs>=3 ? "On "+esc(m.label)+" you can still send "+m.refs+" reference images of the real dishes — do that and the generated food at least resembles what they serve." : "") +
+      "</p>";
+  }
+}
+
+/* ---- pair concrete subjects to the slots that need one ---- */
+function subjects(){
+  const dishes = S.menu.categories.flatMap(c=>c.items).filter(i=>i.name.trim());
+  const heroes = dishes.filter(i=>i.bestseller||i.toprated);
+  const order = heroes.concat(dishes.filter(i=>!heroes.includes(i)));
+  let di = 0;
+  const map = {};
+  (TPL.chosen ? TPL.chosen.slots : []).forEach(s=>{
+    if(s.asset==="dish"||s.asset==="dessert"||s.asset==="drink"){
+      const d = order[di++ % Math.max(1,order.length)];
+      map[s.n] = d ? d.name : null;
+    }
+  });
+  return map;
+}
+
+/* ---- the physical world, described identically in every shot ----
+   The style lock pins the camera. This pins the place: same room, same hour,
+   same surfaces. Without it a text-to-video model reinvents the restaurant
+   on every call and the reel reads as seven different venues. */
+function setLock(){
+  const room = S.visual_identity.interior_style;
+  const plate = S.visual_identity.plating_style;
+  const light = S.visual_identity.lighting;
+  const cuisine = split(S.cuisines)[0] || "";
+  const styleWord = {
+    "Fast food":"fast food restaurant","Fast casual":"fast-casual restaurant",
+    "Casual dining":"casual dining restaurant","Fine dining":"fine dining restaurant",
+    "Café / Coffee shop":"café","Cafeteria":"cafeteria","Bakery / Patisserie":"bakery",
+    "Food truck":"food truck","Cloud kitchen":"delivery kitchen","Buffet":"buffet restaurant",
+    "Bar / Lounge":"bar and lounge","Dessert shop":"dessert shop",
+    "Juice / Smoothie bar":"juice bar","Steakhouse":"steakhouse","Seafood house":"seafood restaurant"
+  }[S.style] || (S.style ? S.style.toLowerCase() + " restaurant" : "restaurant");
+  const hour = {
+    premium:"evening, after dark outside",
+    moody:"late night, dark outside",
+    warm:"late afternoon, low sun outside",
+    appetite:"midday, bright outside",
+    street:"evening, street lit outside"
+  }[C.tone] || "evening";
+
+  const L = [];
+  L.push("One venue, one hour, one continuous visit. Every shot happens in this place:");
+  const venue = (cuisine ? cuisine + " " : "") + styleWord;
+  const article = /^[aeiou]/i.test(venue) ? "an " : "a ";
+  L.push("• Venue: " + article + venue + (S.location.city ? " in " + S.location.city : "") + ".");
+  L.push("• Room: " + (room || "warm neutral interior, wood and stone, seating visible in the background") + ". Identical walls, seating, fixtures and layout in every shot.");
+  L.push("• Hour: " + hour + ". The light outside never changes between shots.");
+  L.push("• Ambient light: " + (light || "warm practical fixtures overhead, one soft daylight source off-frame") + ". Same sources, same direction, same intensity throughout.");
+  L.push("• Surfaces: " + (plate || "the same tableware and serving surfaces") + ", repeated across every shot. No new plate styles appear.");
+  L.push("• Occupancy: the room stays equally busy from first shot to last.");
+  return L.join("\n");
+}
+function shotPrompt(s, subj, prev){
+  const m = M(), T = TPL.chosen, L = T.look;
+  const room = S.visual_identity.interior_style, plate = S.visual_identity.plating_style;
+  const colors = split(S.visual_identity.brand_colors);
+  const cuisine = split(S.cuisines)[0] || "";
+  const out = [];
+
+  out.push("SHOT " + s.n + " OF " + T.slots.length + " — " + (ROLE_LABEL[s.role]||[s.role])[0] + " — " + s.dur + "s — " + C.aspect);
+  out.push("");
+  out.push("SUBJECT");
+  let subject = s.shot;
+  if(subj) subject = subject.replace(/the (hero dish|dish|plate|food|second dish|centrepiece dish|hero item|most reviewed dish)/i, subj);
+  out.push(subject);
+  if(subj) out.push("The dish is " + subj + (cuisine ? ", " + cuisine + "." : "."));
+  if(s.asset==="interior" && room) out.push("Room: " + room + ".");
+  if(s.asset==="exterior" && S.location.city) out.push("Street context reads as " + S.location.city + (S.location.country?", "+S.location.country:"") + ".");
+  if((s.asset==="dish"||s.asset==="dessert") && plate) out.push("Served on " + plate + ".");
+  if(C.must_include.trim() && s.n===1) out.push("Must be visible somewhere in the reel: " + C.must_include.trim() + ".");
+
+  out.push("");
+  out.push("SET LOCK — identical in every shot, do not vary");
+  out.push(setLock());
+
+  out.push("");
+  out.push("STYLE LOCK — identical in every shot, do not vary");
+  out.push("Lens: " + L.lens);
+  out.push("Stock: " + L.film);
+  out.push("Grade: " + L.grade);
+  out.push("Light: " + L.light);
+  out.push("Grain: " + L.grain);
+  out.push("Motion: " + L.motion);
+  if(colors.length) out.push("Brand colours to favour: " + colors.join(", "));
+
+  out.push("");
+  out.push("CONTINUITY");
+  if(C.mode==="hybrid" && s.asset!=="none"){
+    out.push("Source image: the supplied " + (ASSET_INFO[s.asset]||["photo"])[0].toLowerCase() + ". Animate it; do not reimagine it.");
+    out.push("Hold the source's own colour and light — the style lock shapes the grade, it does not replace the room.");
+  }
+  if(m.refs) out.push("Attach the same " + Math.min(m.refs,4) + " reference images used on every other shot in this reel.");
+  if(m.frames && prev) out.push("First frame: the last frame of shot " + prev + ". Generate the move outward from it.");
+  else if(prev) out.push("Match shot " + prev + " for colour temperature, exposure and depth of field. Same room, same hour, same camera.");
+  out.push("Time of day is constant across the whole reel. Nothing changes between shots except the camera.");
+
+  if(m.audio){
+    out.push("");
+    out.push("AUDIO");
+    out.push(audioFor(s) + " No speech, no dialogue, no voices.");
+  }
+
+  out.push("");
+  out.push("NEGATIVE");
+  out.push("No on-screen text, no lettering, no signage copy, no logos, no readable menus or price tags. No faces in focus. No warped hands or extra fingers. No plastic or waxy food. No HDR oversaturation. No stock-photo smiling. No floating objects. No duplicated cutlery." + (C.avoid.trim() ? " Also keep out: " + C.avoid.trim() + "." : ""));
+
+  if(s.overlay){
+    out.push("");
+    out.push("POST — not generated: " + s.overlay.t + " overlay, up to " + s.overlay.max + " characters, composited on top.");
+  }
+  return out.join("\n");
+}
+
+function audioFor(s){
+  const map = {
+    hook:"Close ambient texture matching the action — sizzle, pour or steam. Music enters on the first frame.",
+    establish:"Low room tone, distant cutlery and muted conversation, well under the music.",
+    ambience:"Room tone only, soft and thin.",
+    prep:"Foreground kitchen detail: knife on board, tongs, the pan or grill. Dry and close.",
+    hero:"The dish landing, a short sizzle or crunch, then room tone underneath.",
+    beat:"One clean food sound on the action — tear, pour, cut or crunch.",
+    human:"Light cutlery and fabric movement, no voices.",
+    proof:"Busy room ambience, layered and full.",
+    offer:"Music only, no diegetic sound.",
+    cta:"Music resolves. Light exterior or room tone under it."
+  };
+  return map[s.role] || "Ambient sound matching the action.";
+}
+
+/* ---- Step 4 ---- */
+function renderAssets(){
+  const T = TPL.chosen, m = M();
+  if(!T){
+    $("#assetList").innerHTML = '<p class="note" style="margin:0">Pick a template in Step 3 first — this list is built from its slots.</p>';
+    $("#imgTally").innerHTML=""; $("#overlayList").innerHTML=""; $("#pack").innerHTML=""; $("#imgNote").textContent="";
+    return;
+  }
+  const full = C.mode==="fullai";
+  $("#s4title").textContent = full ? "Reference images and shot prompts" : "Images and shot prompts";
+  $("#s4lede").textContent = full
+    ? "Nothing has to be shot, but reference images still steer the generation. The more real ones you feed in, the closer the output sits to the actual restaurant."
+    : "The image request below is what you send the restaurant. Every line is wired to a specific shot, so there is nothing on it they do not need.";
+  $("#imgTitle").textContent = full ? "Reference images worth supplying" : "Images to request from the restaurant";
+
+  const map = subjects();
+  const need = {};
+  T.slots.forEach(s=>{ if(s.asset!=="none") (need[s.asset] = need[s.asset]||[]).push(s); });
+  const totalShots = Object.values(need).reduce((a,x)=>a+x.length,0);
+
+  if(full){
+    $("#imgNote").textContent = m.refs
+      ? "Optional, but this is the difference between a generic food reel and one that resembles their kitchen. " + m.label + " takes up to " + m.refs + " reference images per generation — send the same set on every shot."
+      : "This model has no reference image input, so everything is generated from text alone.";
+    $("#imgTally").innerHTML =
+      "<span>Reference slots available <b>"+m.refs+"</b></span>" +
+      "<span>Shots that would benefit <b>"+totalShots+"</b></span>" +
+      "<span>Named dishes on file <b>"+Object.values(map).filter(Boolean).length+"</b></span>";
+  }else{
+    $("#imgNote").textContent = "One usable image per shot below. They can be phone photos as long as they are sharp and unfiltered.";
+    $("#imgTally").innerHTML =
+      "<span>Images to collect <b>"+totalShots+"</b></span>" +
+      "<span>Across categories <b>"+Object.keys(need).length+"</b></span>" +
+      "<span>Named dishes <b>"+Object.values(map).filter(Boolean).length+"</b></span>";
+  }
+
+  $("#assetList").innerHTML = Object.entries(need).map(([code,slots])=>{
+    const [title,how] = ASSET_INFO[code] || [code,""];
+    const named = slots.map(s=>map[s.n]).filter(Boolean);
+    const dishLine = named.length
+      ? "<p class='used'>Specifically: " + esc([...new Set(named)].join(", ")) + ".</p>" : "";
+    return '<div class="asset"><h3>'+esc(title)+'</h3>' +
+      '<span class="cnt">'+slots.length+" image"+(slots.length>1?"s":"")+" · slot "+slots.map(s=>s.n).join(", ")+"</span>" +
+      "<p>"+esc(how)+"</p>" + dishLine + "</div>";
+  }).join("");
+
+  const ov = [];
+  T.slots.forEach(s=>{ if(s.overlay) ov.push("Slot "+s.n+": "+s.overlay.t+", "+s.overlay.max+" characters"); });
+  if(S.name) ov.push("Logo lockup on the final slot");
+  const verified = S.menu.categories.flatMap(c=>c.items).filter(i=> i.confidence==="verified" && String(i.price).trim());
+  ov.push(verified.length ? verified.length+" verified prices cleared for on-screen use" : "No verified prices — keep numbers off screen");
+  $("#overlayList").innerHTML = ov.map(x=>'<span class="chip">'+esc(x)+"</span>").join("");
+
+  renderPack(map);
+}
+
+function renderPack(map){
+  const T = TPL.chosen, m = M();
+  map = map || subjects();
+  $("#packNote").textContent = C.mode==="fullai"
+    ? "One complete prompt per shot, each carrying the identical style lock. Generate them in order — every prompt after the first refers back to the one before it, which is what stops the look drifting."
+    : "One prompt per shot, written for image-to-video against the photo that slot uses. The style lock grades the footage without overriding the real room.";
+  $("#pack").innerHTML = T.slots.map((s,i)=>{
+    const txt = shotPrompt(s, map[s.n], i>0 ? T.slots[i-1].n : null);
+    const label = (ROLE_LABEL[s.role]||[s.role])[0];
+    return '<div class="shot" data-open="'+(i===0)+'">' +
+      '<div class="shot-h"><span class="n">'+s.n+'</span><b>'+esc(label)+'</b>' +
+      '<span class="meta">'+s.dur+"s"+(map[s.n]?" · "+esc(map[s.n]):"")+"</span></div>" +
+      "<pre>"+esc(txt)+"</pre></div>";
+  }).join("");
+  $$("#pack .shot-h").forEach(h=> h.addEventListener("click", ()=>{
+    const p = h.parentElement; p.dataset.open = p.dataset.open==="true" ? "false" : "true";
+  }));
+}
+
+function packText(){
+  const T = TPL.chosen; if(!T) return "";
+  const map = subjects(), m = M();
+  const head = [
+    (S.name||"Restaurant") + " — " + T.name + " — " + C.mode.toUpperCase(),
+    "Engine: " + m.label + " · " + C.aspect + " · " + T.slots.length + " shots · " +
+      T.slots.reduce((a,s)=>a+s.dur,0).toFixed(1) + "s total",
+    "", "HOW TO RUN THIS", ...m.prompting.map(x=>"• "+x), "",
+    "".padEnd(60,"—"), ""
+  ].join("\n");
+  return head + T.slots.map((s,i)=> shotPrompt(s, map[s.n], i>0?T.slots[i-1].n:null)).join("\n\n" + "".padEnd(60,"—") + "\n\n");
+}
+
+$("#copyPack").addEventListener("click", async ()=>{
+  if(!TPL.chosen){ mark("#packStatus","Pick a template first.",false); return; }
+  try{ await navigator.clipboard.writeText(packText()); mark("#packStatus","All shot prompts copied.",true); }
+  catch(e){ mark("#packStatus","Copy blocked — use Download.",false); }
+});
+$("#dlPack").addEventListener("click", ()=>{
+  if(!TPL.chosen){ mark("#packStatus","Pick a template first.",false); return; }
+  const blob = new Blob([packText()],{type:"text/plain"});
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob);
+  a.download = (S.name.trim().toLowerCase().replace(/[^a-z0-9]+/g,"-")||"reel") + "-" + TPL.chosen.id + "-prompts.txt";
+  a.click(); URL.revokeObjectURL(a.href);
+  mark("#packStatus","Prompt pack downloaded.",true);
+});
+
+$("#copyAssets").addEventListener("click", async ()=>{
+  const T = TPL.chosen;
+  if(!T){ mark("#assetStatus","Pick a template first.",false); return; }
+  const map = subjects(), need = {};
+  T.slots.forEach(s=>{ if(s.asset!=="none") (need[s.asset]=need[s.asset]||[]).push(s); });
+  const txt = ["Image request — " + (S.name||"restaurant") + " — " + T.name,
+    C.mode==="fullai" ? "Reference images, optional but they keep the generated food close to yours."
+                      : "One usable photo per line. Phone photos are fine if they are sharp and unfiltered.",
+    "Frame: " + C.aspect + ". Vertical unless noted.",""]
+    .concat(Object.entries(need).map(([c,slots])=>{
+      const [t,h] = ASSET_INFO[c]||[c,""];
+      const named = [...new Set(slots.map(s=>map[s.n]).filter(Boolean))];
+      return "• " + t + " × " + slots.length + " — " + h + (named.length ? " Dishes: " + named.join(", ") + "." : "");
+    }))
+    .concat(["","No filters, no beautify mode, largest file size you have."]).join("\n");
+  try{ await navigator.clipboard.writeText(txt); mark("#assetStatus","Image request copied.",true); }
+  catch(e){ mark("#assetStatus","Copy blocked here.",false); }
+});
+
+/* ---- combined export ---- */
+function fullBrief(){
+  const b = brief();
+  b.campaign = Object.assign({}, C);
+  if(TPL.chosen){
+    b.template = {
+      id:TPL.chosen.id, name:TPL.chosen.name, style_lock:TPL.chosen.look, set_lock:setLock(),
+      runtime: TPL.chosen.slots.reduce((a,s)=>a+s.dur,0),
+      slots: TPL.chosen.slots.map(s=>({
+        n:s.n, role:s.role, seconds:s.dur, shot:s.shot,
+        asset_needed:s.asset, overlay:s.overlay, vo_words:s.vo
+      }))
+    };
+  }
+  return b;
+}
+
+/* ---------------- boot ---------------- */
+S.menu.categories = [{id:uid(),name:"",items:[blankItem()]}];
+writeForm(); renderMenu(); validate(); renderModelNote(); renderModeNote();
+</script>
+</body>
+</html>
