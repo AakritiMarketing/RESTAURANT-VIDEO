@@ -140,12 +140,23 @@ button:focus-visible{outline:2px solid var(--menu-red);outline-offset:2px}
 .mode span{font-size:12.8px;color:var(--ink-soft);line-height:1.45}
 /* ---------- prompt pack ---------- */
 .shot{border:1px solid var(--line);border-radius:var(--radius);margin-bottom:12px;overflow:hidden}
-.shot-h{display:flex;gap:12px;align-items:baseline;padding:10px 14px;background:var(--porcelain-deep);cursor:pointer}
-.shot-h .n{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--brass)}
-.shot-h b{font-size:14px}
-.shot-h .meta{margin-left:auto;font-size:12px;color:var(--ink-soft)}
-.shot pre{margin:0;padding:14px 16px;background:#12261E;color:#DCE7DE;font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.6;white-space:pre-wrap;overflow-x:auto}
-.shot[data-open="false"] pre{display:none}
+.shot-h{display:flex;gap:12px;align-items:flex-start;padding:11px 14px;background:var(--porcelain-deep);cursor:pointer}
+.shot-h .n{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--brass);padding-top:3px}
+.shot-h .hgroup{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1}
+.shot-h b{font-size:13px;letter-spacing:.06em}
+.shot-h small{font-size:12.4px;color:var(--ink-soft);line-height:1.45;font-weight:400}
+.shot-h .meta{font-size:12px;color:var(--ink-soft);white-space:nowrap;padding-top:3px}
+.shot[data-open="false"] .shot-body{display:none}
+.shot-body{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line)}
+.shot-body:has(.bar:only-child){grid-template-columns:1fr}
+.bar{background:#12261E;min-width:0;display:flex;flex-direction:column}
+.bar[data-kind="shoot"]{background:#1F2A20}
+.bar-h{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid rgba(255,255,255,.09)}
+.bar-h span{font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:#9CB3A2}
+.bar-h .copybox{padding:3px 10px;font-size:11.5px;background:rgba(255,255,255,.09);color:#E4EDE4;border-color:rgba(255,255,255,.18)}
+.bar-h .copybox:hover{background:rgba(255,255,255,.18)}
+.shot pre{margin:0;padding:12px 14px;color:#DCE7DE;font-family:"IBM Plex Mono",monospace;font-size:11.8px;line-height:1.62;white-space:pre-wrap;overflow-wrap:anywhere;word-break:normal;min-width:0}
+@media (max-width:820px){ .shot-body{grid-template-columns:1fr} }
 .tthumb{aspect-ratio:3/2;background:var(--bottle);position:relative;overflow:hidden}
 .tthumb img{width:100%;height:100%;object-fit:cover;display:block}
 .tthumb .ph{position:absolute;inset:0;display:flex;align-items:flex-end;padding:14px;background:linear-gradient(160deg,#1E4234,#0E1F18);color:#9FB6A8;font-family:"IBM Plex Mono",monospace;font-size:11px}
@@ -155,9 +166,12 @@ button:focus-visible{outline:2px solid var(--menu-red);outline-offset:2px}
 .tbody .why{font-size:13px;color:var(--ink-soft);line-height:1.45}
 .tbody .fit{margin-top:auto;padding-top:8px;font-size:12px;color:var(--bottle-soft)}
 .rank{display:inline-block;background:var(--brass);color:#fff;font-size:11px;padding:1px 8px;border-radius:99px;margin-bottom:2px}
+.rank.blocked{background:var(--menu-red)}
+.tcard.blocked{opacity:.5}
+.tcard.blocked .tthumb{filter:grayscale(1)}
 
 /* ---------- slots ---------- */
-.slot{display:grid;grid-template-columns:34px 108px 1fr 96px;gap:12px;padding:12px;border-bottom:1px solid var(--porcelain-deep);align-items:start}
+.slot{display:grid;grid-template-columns:34px 108px minmax(0,1fr) 96px;gap:12px;padding:12px;border-bottom:1px solid var(--porcelain-deep);align-items:start}
 .slot:last-child{border-bottom:0}
 .slot .n{font-family:"IBM Plex Mono",monospace;color:var(--brass);font-size:12px;padding-top:3px}
 .slot .role{font-weight:600;font-size:13.5px}
@@ -175,7 +189,13 @@ button:focus-visible{outline:2px solid var(--menu-red);outline-offset:2px}
 .asset .cnt{font-family:"IBM Plex Mono",monospace;font-size:11.5px;color:var(--brass)}
 .asset p{font-size:13.5px;color:var(--ink-soft);margin:6px 0 0}
 .asset .used{font-size:12px;color:var(--ink-soft);margin-top:6px}
-@media (max-width:700px){ .slot{grid-template-columns:26px 1fr;gap:8px} .slot .dur{justify-self:start} }
+@media (max-width:760px){
+  .slot{grid-template-columns:26px minmax(0,1fr);gap:6px 10px;padding:14px 12px}
+  .slot .role{grid-column:2}
+  .slot .desc{grid-column:1/-1;font-size:13.5px;line-height:1.55;padding-top:2px}
+  .slot .dur{grid-column:1/-1;justify-self:start;margin-top:2px}
+  .slotshead{display:none}
+}
 .chip{background:#fff;border:1px solid var(--line);border-radius:999px;padding:4px 12px;font-size:12.5px}
 .chip b{font-weight:600}
 .toast{
@@ -387,13 +407,26 @@ button:focus-visible{outline:2px solid var(--menu-red);outline-offset:2px}
       <div class="grid2">
         <div class="field"><label for="c_obj">Objective</label>
           <select id="c_obj" data-c="objective">
-            <option value="awareness">Get the place noticed</option>
-            <option value="dish">Launch or push one dish</option>
-            <option value="offer">Run an offer or discount</option>
-            <option value="opening">Announce an opening or relaunch</option>
-            <option value="delivery">Drive delivery and late-night orders</option>
-            <option value="story">Tell the brand story</option>
-            <option value="event">Fill an event or occasion</option>
+            <optgroup label="Sell something">
+              <option value="awareness">Get the place noticed</option>
+              <option value="dish">Launch or push one dish</option>
+              <option value="offer">Run an offer or discount</option>
+              <option value="opening">Announce an opening or relaunch</option>
+              <option value="delivery">Drive delivery and late-night orders</option>
+              <option value="event">Fill an event or occasion</option>
+            </optgroup>
+            <optgroup label="Win the algorithm">
+              <option value="trend">Chase a trend, built to be shared</option>
+              <option value="showoff">Flex — make people screenshot it</option>
+              <option value="wow">Something impossible, pure spectacle</option>
+              <option value="asmr">Sound-led, satisfying, hypnotic</option>
+            </optgroup>
+            <optgroup label="Build the brand">
+              <option value="story">Tell the brand story</option>
+              <option value="ugc">Look like a real customer filmed it</option>
+              <option value="nostalgia">Memory and belonging</option>
+              <option value="craft">Show the skill behind the food</option>
+            </optgroup>
           </select>
         </div>
         <div class="field"><label for="c_plat">Where it runs</label>
@@ -414,13 +447,25 @@ button:focus-visible{outline:2px solid var(--menu-red);outline-offset:2px}
             <option value="45">45 seconds</option>
           </select>
         </div>
-        <div class="field"><label for="c_tone">Tone</label>
+        <div class="field"><label for="c_tone">Tone and pace</label>
           <select id="c_tone" data-c="tone">
-            <option value="appetite">Appetite-first, fast and loud</option>
-            <option value="premium">Premium and restrained</option>
-            <option value="warm">Warm and family</option>
-            <option value="street">Street food energy</option>
-            <option value="moody">Moody and late-night</option>
+            <optgroup label="Fast">
+              <option value="hype">Hype — fast, punchy, cut on the beat</option>
+              <option value="chaos">Chaotic fun — maximalist, nothing held back</option>
+              <option value="street">Street food energy</option>
+              <option value="appetite">Appetite-first, fast and loud</option>
+            </optgroup>
+            <optgroup label="Measured">
+              <option value="premium">Premium and restrained</option>
+              <option value="luxe">Luxury cinematic — slow, expensive, wide</option>
+              <option value="warm">Warm and family</option>
+              <option value="nostalgic">Nostalgic — memory and warmth</option>
+              <option value="moody">Moody and late-night</option>
+            </optgroup>
+            <optgroup label="Unpolished">
+              <option value="raw">Raw phone footage, deliberately unpolished</option>
+              <option value="playful">Playful and a bit silly</option>
+            </optgroup>
           </select>
         </div>
         <div class="field"><label for="c_lang">Language on screen</label><input id="c_lang" data-c="language" placeholder="English, or English + Arabic"></div>
@@ -486,6 +531,33 @@ button:focus-visible{outline:2px solid var(--menu-red);outline-offset:2px}
         <button class="ghost tiny" id="showAll">Show all templates</button>
       </div>
       <div class="tgrid" id="tgrid"></div>
+    </div>
+
+    <div class="card" id="ownIdea">
+      <h3>Or build it from your own idea</h3>
+      <p class="note">If none of these is the film in your head, describe yours. You get a research-grade prompt to take to Gemini, Claude or ChatGPT, and whatever it returns comes back in here as a working template with the same locks and the same shot pack.</p>
+      <div class="field">
+        <textarea id="ideaIn" rows="5" placeholder="A delivery rider races across the city at night. Every time he passes under a streetlight the food in the box behind him changes to a different dish. He arrives, opens the box, and it is the hero dish, still steaming."></textarea>
+      </div>
+      <div class="row-actions">
+        <button class="act" id="buildIdea">Turn my idea into a prompt</button>
+        <button class="ghost" id="clearIdea">Clear</button>
+      </div>
+      <div id="ideaOut" hidden>
+        <div class="lockbox" id="ideaPrompt" style="margin-top:14px"></div>
+        <div class="row-actions">
+          <button class="act" id="copyIdea">Copy the prompt</button>
+          <span class="status" id="ideaStatus"></span>
+        </div>
+        <div class="field" style="margin-top:14px">
+          <label for="ideaBack">Paste what the AI gave you</label>
+          <textarea id="ideaBack" class="mono" rows="6" placeholder='{ "template": { "name": "...", "slots": [ ... ] } }'></textarea>
+        </div>
+        <div class="row-actions">
+          <button class="act" id="loadIdea">Build it into a template</button>
+          <span class="status" id="ideaBackStatus"></span>
+        </div>
+      </div>
     </div>
 
     <div id="tdetail" hidden>
@@ -1038,6 +1110,105 @@ function renderModelNote(){
     "<p style='margin:10px 0 4px;font-size:13.5px'><b>Watch for</b></p><ul>" +
       m.bad.map(x=>"<li>"+esc(x)+"</li>").join("") + "</ul>";
 }
+/* ================= KITCHEN KIT =================
+   Templates are written with generic tokens for anything equipment-specific.
+   A steakhouse and a gelato counter both get "the heat step" — but one resolves
+   to a charcoal grill and the other to a batch freezer. Without this a juice bar
+   gets told to fly the camera through grill bars. */
+const KITS = {
+  fire:{ label:"open fire or charcoal grill",
+    heat:"the charcoal grill", heatAction:"flames leaping around the grill bars, fat dripping and igniting",
+    pass:"the gap between the glowing grill bars, flame passing either side",
+    action:"tongs turning the cut on the bars, char marks catching the light",
+    texture:"a knife through the cut, juices pulling across the board",
+    side:"flatbread torn by hand", vessel:"a platter", sound:"the sizzle and spit of the grill" },
+  oven:{ label:"deck or stone oven",
+    heat:"the oven mouth", heatAction:"the oven door opening, heat distorting the air, the bake sliding in",
+    pass:"the open oven mouth, heat shimmer distorting the frame either side",
+    action:"the peel sliding under the bake and lifting it clear",
+    texture:"the crust torn open, steam escaping and crumb structure showing",
+    side:"warm bread torn by hand", vessel:"a wooden board", sound:"the crackle of a cooling crust" },
+  fryer:{ label:"fryer and flat-top griddle",
+    heat:"the fryer", heatAction:"the basket dropping into oil, violent bubbling, steam surging up",
+    pass:"the rising column of steam off the fryer basket",
+    action:"the basket lifted and shaken, oil streaming off",
+    texture:"the crust cracked open, steam venting from the middle",
+    side:"fries tipped from the basket", vessel:"a lined tray", sound:"the roar of the fryer and the shake of the basket" },
+  wok:{ label:"wok range",
+    heat:"the wok", heatAction:"the wok tossing, flame rolling up the side, food airborne",
+    pass:"the arc of food thrown from the wok, flame curling beneath",
+    action:"the wok tossed hard, ingredients lifting and landing",
+    texture:"noodles or rice lifted high and falling back in strands",
+    side:"rice scooped from the pot", vessel:"a deep bowl", sound:"the roar of the burner and the scrape of the ladle" },
+  cold:{ label:"cold prep and knife work",
+    heat:"the prep counter", heatAction:"the knife working through the fillet in one clean stroke",
+    pass:"the falling curtain of shaved ice as it parts",
+    action:"the blade drawn through in a single unbroken cut",
+    texture:"the slice separating cleanly, surface catching the light",
+    side:"garnish scattered by hand", vessel:"a chilled plate", sound:"the clean sound of a sharp blade on the board" },
+  frozen:{ label:"gelato and frozen counter",
+    heat:"the freezer counter", heatAction:"the paddle folding through the churn, ribbons building and folding over",
+    pass:"the ribbon of gelato folding over itself as it leaves the paddle",
+    action:"the spade drawn across the pan, curling a ribbon up and over",
+    texture:"the scoop pressed and released, ridges holding their shape",
+    side:"a wafer or crumble scattered over", vessel:"a cone or coupe", sound:"the scrape of the spade across the pan" },
+  drink:{ label:"espresso bar or juice counter",
+    heat:"the espresso machine", heatAction:"the shot pulling dark into the cup, steam rising off the group head",
+    pass:"the falling stream of the pour, splitting around the lens",
+    action:"the milk textured under the steam wand, the jug swirled and settled",
+    texture:"the pour folding into the cup, pattern forming on the surface",
+    side:"a pastry set alongside", vessel:"a ceramic cup", sound:"the hiss of the steam wand and the knock of the portafilter" },
+  pass:{ label:"the pass",
+    heat:"the pass", heatAction:"the dish finished under the heat lamps, hands moving fast",
+    pass:"the rising steam off the plate at the pass",
+    action:"hands finishing the plate, tweezers placing the last element",
+    texture:"the first element lifted, the dish opening up beneath it",
+    side:"a side dish set alongside", vessel:"a plate", sound:"the clatter of the pass and the call of the order" }
+};
+
+function kitFor(){
+  const cui = split(S.cuisines).join(" ").toLowerCase() + " " + (S.name||"").toLowerCase();
+  const has = re => re.test(cui);
+  /* cuisine wins over style — a Lebanese casual dining room is a grill house */
+  if(has(/gelato|ice ?cream|frozen yog|sorbet|kulfi/)) return KITS.frozen;
+  if(has(/coffee|espresso|juice|smoothie|bubble tea|matcha/)) return KITS.drink;
+  if(has(/sushi|sashimi|poke|ceviche|raw|salad/)) return KITS.cold;
+  if(has(/grill|bbq|barbec|kebab|shawarma|steak|charcoal|mangal|churrasc|lebanese|turkish|persian|iranian|afghan/)) return KITS.fire;
+  if(has(/pizza|bakery|patisser|bread|croissant|manakish|pide|tandoor/)) return KITS.oven;
+  if(has(/burger|fried chicken|fish and chips|broast|nashville|wings/)) return KITS.fryer;
+  if(has(/chinese|thai|vietnam|malay|indonesi|wok|noodle|ramen/)) return KITS.wok;
+
+  const byStyle = {
+    "Steakhouse":KITS.fire, "Seafood house":KITS.fire, "Food truck":KITS.fryer,
+    "Fast food":KITS.fryer, "Bakery / Patisserie":KITS.oven, "Dessert shop":KITS.frozen,
+    "Café / Coffee shop":KITS.drink, "Juice / Smoothie bar":KITS.drink,
+    "Fine dining":KITS.pass, "Bar / Lounge":KITS.drink, "Cafeteria":KITS.pass,
+    "Buffet":KITS.pass, "Cloud kitchen":KITS.fryer, "Fast casual":KITS.fryer,
+    "Casual dining":KITS.pass
+  };
+  return byStyle[S.style] || KITS.pass;
+}
+
+/* swap tokens, then catch any equipment word that slipped through literally */
+function adapt(text){
+  const k = kitFor();
+  let t = String(text||"")
+    .replace(/\{HEAT\}/g, k.heat)
+    .replace(/\{HEAT_ACTION\}/g, k.heatAction)
+    .replace(/\{PASS\}/g, k.pass)
+    .replace(/\{ACTION\}/g, k.action)
+    .replace(/\{TEXTURE\}/g, k.texture)
+    .replace(/\{SIDE\}/g, k.side)
+    .replace(/\{VESSEL\}/g, k.vessel)
+    .replace(/\{SOUND\}/g, k.sound);
+  if(k !== KITS.fire){
+    t = t.replace(/\bgrill bars\b/gi, k.heat)
+         .replace(/\bthe grill\b/gi, k.heat)
+         .replace(/\bcharcoal grill\b/gi, k.heat);
+  }
+  return t.charAt(0).toUpperCase() + t.slice(1);
+}
+
 function sl(role,dur,shot,asset,overlay,vo){ return {role,dur,shot,asset,overlay,vo}; }
 
 const ROLE_LABEL = {
@@ -1068,7 +1239,7 @@ const ASSET_INFO = {
 
 const TEMPLATES = [
   { id:"slow-burn", name:"Slow Burn", base:26,
-    obj:["awareness","story","dish"], tone:["premium","moody"], styles:["Fine dining","Steakhouse","Seafood house","Casual dining"],
+    obj:["awareness","story","dish","craft"], tone:["premium","moody","luxe"], styles:["Fine dining","Steakhouse","Seafood house","Casual dining"],
     why:"Long lenses, almost no cuts, one dish carried the whole way. Reads expensive because it refuses to hurry.",
     look:{lens:"85mm macro and 50mm, T1.8, shallow throughout",film:"Large-format digital, ARRI-like colour science",grade:"Warm shadows, amber highlights, deep neutral blacks, low contrast curve",light:"Single warm key at 2900K from frame left, heavy negative fill, practical bokeh behind",grain:"Fine 35mm grain, subtle halation on highlights",motion:"Slow push-ins and lateral drifts only, 3–5cm per second, always on a slider"},
     slots:[
@@ -1081,22 +1252,22 @@ const TEMPLATES = [
       sl("cta",5,"Locked-off wide of the storefront at blue hour, warm windows, no camera move.","exterior",{t:"cta",max:30},"7-10")
     ]},
 
-  { id:"flame", name:"Flame and Char", base:22,
-    obj:["awareness","dish","delivery"], tone:["appetite","street"], styles:["Steakhouse","Casual dining","Fast casual","Food truck","Buffet"],
+  { id:"flame", name:"Flame and Char", base:22, kits:["fire","oven","fryer","wok"],
+    obj:["awareness","dish","delivery","showoff"], tone:["appetite","street","hype","chaos"], styles:["Steakhouse","Casual dining","Fast casual","Food truck","Buffet"],
     why:"Fire, smoke and sizzle cut hard on the beat. The loudest template here and the best performer on cold audiences.",
     look:{lens:"35mm and 24mm close, T2.8, slight barrel distortion kept",film:"High-shutter digital, crisp motion, no smear",grade:"Orange and deep teal split, crushed blacks, high micro-contrast, saturated reds",light:"Firelight as the key, hard rim from a cool source behind the smoke",grain:"Light grain, visible sparks and airborne ash as texture",motion:"Handheld with weight, quick whip pans, one snap zoom per cut"},
     slots:[
-      sl("hook",2.5,"Flames leap up around the grill bars, whip pan into the meat as fat drips and ignites.","kitchen",{t:"hook",max:22},"0"),
-      sl("prep",3.5,"Tongs turn the cut, char marks catch the light, smoke crosses the lens.","kitchen",null,"6-9"),
+      sl("hook",2.5,"{HEAT_ACTION}. Whip pan into the food as it catches.","kitchen",{t:"hook",max:22},"0"),
+      sl("prep",3.5,"{ACTION}, smoke or steam crossing the lens.","kitchen",null,"6-9"),
       sl("hero",4,"Handheld orbit around the finished platter as it lands on the table, steam rolling off it.","dish",{t:"line",max:26},"8-11"),
-      sl("beat",3,"Knife through the cut, juice pulls across the board in macro.","dish",null,"6-8"),
-      sl("beat",3,"Flatbread or side torn by hand, straight into the sauce.","dish",null,"6-8"),
+      sl("beat",3,"{TEXTURE}, shot in macro.","dish",null,"6-8"),
+      sl("beat",3,"{SIDE}, straight into the sauce.","dish",null,"6-8"),
       sl("human",3,"Bite taken at the table, hands and jaw only, everything else soft.","none",null,"5-7"),
-      sl("cta",3,"Push in on the storefront sign at night, grill glow spilling onto the pavement.","exterior",{t:"cta",max:30},"6-9")
+      sl("cta",3,"Push in on the storefront sign at night, warm interior glow spilling onto the pavement.","exterior",{t:"cta",max:30},"6-9")
     ]},
 
   { id:"doors-open", name:"Doors Open", base:24,
-    obj:["opening","awareness","event"], tone:["warm","appetite"], styles:["Casual dining","Café / Coffee shop","Fast casual","Bakery / Patisserie","Fine dining"],
+    obj:["opening","awareness","event"], tone:["warm","appetite","nostalgic"], styles:["Casual dining","Café / Coffee shop","Fast casual","Bakery / Patisserie","Fine dining"],
     why:"Built for a first look: outside, through the door, into the room, onto the table. Answers what and where before it sells anything.",
     look:{lens:"24mm wide for the walk-in, 50mm for the tables, T2.8",film:"Clean digital, natural colour, no stylisation",grade:"Bright and open, lifted blacks, true whites, gentle warmth in the skin range",light:"Daylight-balanced ambient plus warm practicals left visibly warmer",grain:"Almost none, a whisper only",motion:"Continuous forward gimbal move as if walking in, one unbroken direction of travel"},
     slots:[
@@ -1110,20 +1281,20 @@ const TEMPLATES = [
     ]},
 
   { id:"one-dish", name:"One Dish, Start to Finish", base:20,
-    obj:["dish","awareness","story"], tone:["appetite","premium","warm"], styles:["Fast casual","Casual dining","Bakery / Patisserie","Dessert shop","Café / Coffee shop","Fine dining"],
+    obj:["dish","awareness","story","craft","asmr"], tone:["appetite","premium","warm","luxe"], styles:["Fast casual","Casual dining","Bakery / Patisserie","Dessert shop","Café / Coffee shop","Fine dining"],
     why:"Raw ingredient to first bite on a single dish. The most reliable format there is for a new menu item.",
     look:{lens:"100mm macro throughout, T2.8, tight and tactile",film:"Clean digital with a soft filtration, highlights allowed to bloom",grade:"Rich mids, warm neutrals, ingredient colours pushed slightly",light:"Soft top light through diffusion, one bounce card, no visible hard shadow",grain:"Minimal, texture comes from the food not the stock",motion:"Locked-off frames alternating with slow top-down drops, cuts on the action"},
     slots:[
       sl("hook",2.5,"Macro on the raw ingredient hitting the board, flour or water spraying in slow motion.","none",{t:"hook",max:22},"0"),
       sl("prep",3.5,"Hands working the ingredient, top-down, board filling the frame.","staff",null,"7-9"),
-      sl("prep",3.5,"The heat step: pan, oven, grill or fryer, the moment it transforms.","kitchen",null,"7-9"),
+      sl("prep",3.5,"The heat step at {HEAT} — the moment it transforms.","kitchen",null,"7-9"),
       sl("hero",4,"Finished dish drops into frame from above and settles, garnish falling last.","dish",{t:"line",max:26},"8-11"),
-      sl("beat",3,"Cheese pull, sauce break or steam release in macro.","dish",null,"6-8"),
+      sl("beat",3,"{TEXTURE}, in macro.","dish",null,"6-8"),
       sl("cta",3.5,"Hand lifts the first piece out of frame toward camera.","dish",{t:"cta",max:30},"6-9")
     ]},
 
   { id:"offer-drop", name:"Offer Drop", base:18,
-    obj:["offer","delivery","event"], tone:["appetite","street"], styles:["Fast food","Fast casual","Food truck","Cloud kitchen","Buffet","Dessert shop"],
+    obj:["offer","delivery","event","trend"], tone:["appetite","street","hype","chaos"], styles:["Fast food","Fast casual","Food truck","Cloud kitchen","Buffet","Dessert shop"],
     why:"Price-led and fast. The number appears in the first second and never leaves the screen for long.",
     look:{lens:"35mm, T4, deeper focus so the whole spread reads at a glance",film:"Punchy digital, high shutter, no motion blur",grade:"High saturation, bright clean whites, brand colour pushed hardest",light:"Broad soft key, near-shadowless, food lit to look abundant",grain:"None, poster-clean",motion:"Snap cuts on the beat, quick top-down reveals, one whip transition"},
     slots:[
@@ -1137,7 +1308,7 @@ const TEMPLATES = [
     ]},
 
   { id:"late-night", name:"Late Night Craving", base:20,
-    obj:["delivery","awareness","offer"], tone:["moody","street","appetite"], styles:["Fast food","Cloud kitchen","Food truck","Fast casual","Dessert shop","Bar / Lounge"],
+    obj:["delivery","awareness","offer","ugc"], tone:["moody","street","appetite","raw"], styles:["Fast food","Cloud kitchen","Food truck","Fast casual","Dessert shop","Bar / Lounge"],
     why:"Neon, night and packaging. Made for the 11pm delivery scroll rather than the lunch decision.",
     look:{lens:"35mm anamorphic-style, T2, flares allowed",film:"Low-light digital, noise embraced not fought",grade:"Magenta and cyan neon spill, deep blacks, warm food against cool surroundings",light:"Practical neon and signage as the key, phone screen glow as fill",grain:"Heavy but fine, visible in the shadows",motion:"Handheld, slight drift, rack focus between foreground neon and the food"},
     slots:[
@@ -1149,8 +1320,8 @@ const TEMPLATES = [
       sl("cta",4,"Delivery bag handed over at a doorway, or set down on a table beside a phone.","delivery",{t:"cta",max:30},"7-10")
     ]},
 
-  { id:"morning", name:"Morning Ritual", base:22,
-    obj:["awareness","story","dish"], tone:["warm","premium"], styles:["Café / Coffee shop","Bakery / Patisserie","Cafeteria","Juice / Smoothie bar","Dessert shop"],
+  { id:"morning", name:"Morning Ritual", base:22, kits:["drink","oven","frozen"],
+    obj:["awareness","story","dish","asmr","craft"], tone:["warm","premium","luxe","nostalgic"], styles:["Café / Coffee shop","Bakery / Patisserie","Cafeteria","Juice / Smoothie bar","Dessert shop"],
     why:"Soft daylight, steam and pour shots. Sells a time of day and a habit rather than a single product.",
     look:{lens:"50mm and 85mm, T2, gentle and observational",film:"Clean digital with a light diffusion filter, soft highlight roll-off",grade:"Airy, low saturation, warm whites, pale wood and ceramic tones held true",light:"Large window as the only source, sheer diffusion, long soft shadows across the table",grain:"Fine and even, film-like",motion:"Static frames with life moving inside them, one slow push per sequence"},
     slots:[
@@ -1163,21 +1334,117 @@ const TEMPLATES = [
     ]},
 
   { id:"family-table", name:"The Family Table", base:24,
-    obj:["awareness","event","story","offer"], tone:["warm","appetite"], styles:["Casual dining","Buffet","Cafeteria","Fast casual","Seafood house","Steakhouse"],
+    obj:["awareness","event","story","offer","nostalgia"], tone:["warm","appetite","nostalgic"], styles:["Casual dining","Buffet","Cafeteria","Fast casual","Seafood house","Steakhouse"],
     why:"Abundance and sharing. Built around a full table rather than a single plate, which is how family restaurants actually sell.",
     look:{lens:"28mm for the table wides, 50mm for details, T2.8",film:"Warm clean digital, natural skin tones protected",grade:"Golden warmth, generous mids, nothing crushed, food reading bright and plentiful",light:"Warm overhead practicals plus soft ambient fill, no hard shadows across the plates",grain:"Light, unobtrusive",motion:"Slow rise and boom-down over the table, gentle handheld for the hands"},
     slots:[
       sl("hook",3,"Boom down over a fully loaded table, dishes filling the frame edge to edge.","dish",{t:"hook",max:24},"0"),
       sl("beat",3,"Hands reaching in from several directions, serving and passing.","none",null,"6-8"),
       sl("hero",4,"The centrepiece dish set down in the middle, everyone's hands pulling back.","dish",{t:"line",max:28},"8-11"),
-      sl("beat",3,"Rice, bread or sides scooped in macro, steam rising.","dish",null,"6-8"),
+      sl("beat",3,"{SIDE}, in macro, steam rising.","dish",null,"6-8"),
       sl("human",3.5,"Table laughing, shot from the end of the table, faces soft or cropped.","none",null,"7-9"),
       sl("ambience",3,"Room wide, other tables full, warm and busy.","interior",null,"6-8"),
       sl("cta",4.5,"Pull back to the storefront or entrance, family walking in.","exterior",{t:"cta",max:32},"7-10")
     ]},
 
+  { id:"menu-morph", name:"The Menu Morph", base:24,
+    obj:["wow","showoff","awareness","dish"], tone:["luxe","hype","premium"], styles:["Fine dining","Casual dining","Steakhouse","Seafood house","Fast casual","Buffet"],
+    why:"He sits, opens the menu, and the dish on the table transforms with every page he turns. Four dishes in one unbroken shot. This is the one that makes people watch twice.",
+    look:{lens:"35mm on a slow dolly, T2.8, locked height across the whole piece",film:"Clean cinema digital, high dynamic range held in the highlights",grade:"Warm neutral, rich but not stylised, food colours true so each morph reads clearly",light:"Constant key from a window or pendant above the table, never moves during a morph",grain:"Fine and even",motion:"One continuous slow push toward the table. The camera never cuts during a transformation — the dish changes, the frame does not"},
+    slots:[
+      sl("hook",3,"Guest sits down at the table, hands settle, menu closed in front of them. Camera begins a slow push in.","interior",{t:"hook",max:24},"0"),
+      sl("beat",4,"Menu opens. On the table beside it, the first dish materialises in place — ingredients assembling into the finished plate. Camera does not cut.","dish",null,"7-9"),
+      sl("beat",4,"Page turns. The first dish dissolves and the second builds in the same spot, same light, same plate position.","dish",null,"7-9"),
+      sl("beat",4,"Page turns again. Third dish forms in the identical position. Steam rises as it completes.","dish",null,"7-9"),
+      sl("hero",5,"Final page turn. The hero dish assembles last and largest, the guest's hand lowers the menu, and the camera settles on the plate.","dish",{t:"line",max:28},"9-12"),
+      sl("cta",4,"Guest reaches in and takes the first bite. Camera pulls back to reveal the full table and the room around it.","interior",{t:"cta",max:32},"7-10")
+    ]},
+
+  { id:"photo-burst", name:"Every Three Seconds", base:26,
+    obj:["story","awareness","craft","showoff"], tone:["luxe","premium","nostalgic"], styles:["Fine dining","Steakhouse","Casual dining","Seafood house","Café / Coffee shop","Bakery / Patisserie"],
+    why:"A stills sequence played fast — the same scene photographed every few seconds, so the whole meal reads as one continuous memory. Ends on a slow pull-back, a dim, and the brand plate. The most expensive-looking thing in this list.",
+    look:{lens:"50mm throughout, T2, consistent across every frame in the burst",film:"Photographic stills look, deeper contrast than video, highlight roll-off held",grade:"Warm luxury grade, deep blacks, gold in the highlights, skin protected",light:"One warm key, constant across the entire sequence, no relighting between frames",grain:"Fine photographic grain, consistent frame to frame",motion:"Rapid stills cadence — each image held briefly with a micro push. The final shot is the only true motion: a slow pull back"},
+    slots:[
+      sl("hook",3,"Rapid burst of ten plated dishes, each held a fraction of a second, same table, same light, different angle each time.","dish",{t:"hook",max:24},"0"),
+      sl("prep",3,"Ten frames of the same hero dish being made in the kitchen, stepping forward through the process — raw, seasoned, on the heat, resting, plated.","kitchen",null,"7-9"),
+      sl("beat",3,"Five frames of the server carrying and setting the dish down, caught mid-stride and mid-placement.","staff",null,"6-8"),
+      sl("human",3,"Five frames of the guest reacting and eating — lifting, tasting, pausing. Faces cropped or soft.","none",null,"6-8"),
+      sl("ambience",4,"The burst slows. Frames hold longer. The room around the table comes into view.","interior",null,"7-9"),
+      sl("cta",5,"True slow motion at last. Camera pulls steadily away from the guest at the table. Everything else stills.","interior",{t:"line",max:30},"8-10"),
+      sl("cta",5,"The frame dims to near black. Logo, name, location and phone number resolve in the centre, composited in post.","logo",{t:"cta",max:40},"8-11")
+    ]},
+
+  { id:"reunion", name:"The Reunion", base:30,
+    obj:["nostalgia","story","awareness","event"], tone:["nostalgic","warm","luxe"], styles:["Casual dining","Café / Coffee shop","Steakhouse","Cafeteria","Buffet","Fast casual"],
+    why:"Old friends travelling in from different places to meet at the same table they always used. Memory intercut with the present. Built for a restaurant with years behind it — the anniversary film.",
+    look:{lens:"35mm for the travel, 50mm at the table, T2",film:"Warm filmic digital. Memory sections graded softer and slightly faded, present-day clean",grade:"Present: warm and full. Memory: lifted blacks, milky highlights, reduced saturation, gentle halation",light:"Golden hour outside, warm practicals inside, memory scenes overexposed by a stop",grain:"Present fine, memory noticeably heavier — the grain is what separates the two timelines",motion:"Handheld and human for the travel, settled and still at the table, one long pull back at the end"},
+    slots:[
+      sl("hook",3,"Three phone screens, three different cities, the same message thread lighting up. Hands only.","none",{t:"hook",max:26},"0"),
+      sl("establish",4,"Cross-cut travel: a car on a highway, a train window, a taxi door closing. All heading the same way.","none",null,"8-10"),
+      sl("beat",5,"Memory flashback, visibly older and softer: the same friends younger at the same table, laughing, plates between them.","none",{t:"line",max:30},"9-12"),
+      sl("beat",4,"Present day. First arrival pushes the restaurant door open and scans the room.","exterior",null,"8-10"),
+      sl("human",5,"The table fills one by one. Handshakes, embraces, chairs pulled in. Shot from the end of the table, faces soft.","interior",null,"9-12"),
+      sl("hero",4,"The food arrives — the dish they always ordered — and lands in the middle of the table.","dish",{t:"line",max:28},"8-10"),
+      sl("cta",5,"Slow pull back from the group, the room widening around them, sound falling away.","interior",{t:"cta",max:44},"8-11")
+    ]},
+
+  { id:"speed-run", name:"Speed Run", base:15,
+    obj:["trend","showoff","dish","offer"], tone:["hype","chaos","street","appetite"], styles:["Fast food","Fast casual","Food truck","Dessert shop","Cloud kitchen","Casual dining","Juice / Smoothie bar"],
+    why:"Twelve shots in fifteen seconds, every cut on the beat. No shot outlasts its welcome because no shot lasts more than one and a half seconds. Built to be rewatched.",
+    look:{lens:"24mm and 35mm, T4, deep focus so every fast cut reads instantly",film:"High shutter digital, crisp, zero motion blur",grade:"Punchy and saturated, contrast high, brand colour pushed hard",grain:"None",light:"Bright, broad, shadowless — no time for the eye to hunt for the subject",motion:"Whip pans, snap zooms and match cuts. Every shot enters and exits on movement"},
+    slots:[
+      sl("hook",1.5,"Snap zoom onto the hero dish, impact frame, everything already at full energy.","dish",{t:"hook",max:18},"0"),
+      sl("beat",1.5,"Whip pan to a second dish, landing hard on frame.","dish",null,"3-5"),
+      sl("beat",1.5,"Match cut: pour or sauce hitting the plate in macro.","dish",null,"3-5"),
+      sl("prep",1.5,"{HEAT} in one fast burst.","kitchen",null,"3-5"),
+      sl("beat",1.5,"Overhead snap of the full spread landing at once.","dish",null,"3-5"),
+      sl("human",1.5,"Bite taken, quick and hard, hands only.","none",null,"3-5"),
+      sl("beat",1.5,"{TEXTURE}, tight macro.","dish",null,"3-5"),
+      sl("proof",1.5,"Fast pan across a busy room or a queue.","interior",null,"3-5"),
+      sl("cta",3,"Everything stops. One clean hold on the storefront or the logo plate.","exterior",{t:"cta",max:28},"6-8")
+    ]},
+
+  { id:"impossible", name:"Impossible Camera", base:20,
+    obj:["wow","showoff","trend","awareness"], tone:["hype","luxe","chaos"], styles:["Fast casual","Casual dining","Steakhouse","Fine dining","Dessert shop","Fast food","Seafood house"],
+    why:"Camera moves no real rig could make — through the grill grate, inside the burger, out of a glass and across the room. Pure generative showmanship, and the reason to be using AI at all.",
+    look:{lens:"14mm ultra-wide with heavy perspective, T2.8, macro at the extremes of the move",film:"Hyper-real digital, saturated, everything crisp",grade:"Rich and dimensional, deep blacks, strong colour separation between food and room",light:"Dramatic and directional, light sources visible in frame, strong falloff",grain:"None — the look is impossibly clean on purpose",motion:"One continuous impossible move per shot. Never cut mid-move. Speed ramps at entry and exit"},
+    slots:[
+      sl("hook",3,"Camera flies straight through {PASS}, and out over the food.","kitchen",{t:"hook",max:22},"0"),
+      sl("beat",3.5,"Continuous move down through the layers of the hero dish, passing between each one, and out the other side.","dish",null,"7-9"),
+      sl("beat",3.5,"Camera rises out of {VESSEL}, contents parting around the lens, into a wide of the table.","drink",null,"7-9"),
+      sl("hero",4,"Full 360 orbit around the hero dish at impossible speed, then a hard stop on the perfect angle.","dish",{t:"line",max:26},"8-11"),
+      sl("beat",3,"Time freezes mid-air on a pour or a toss. Camera arcs around the frozen moment and time resumes.","dish",null,"6-8"),
+      sl("cta",3,"Pull back at speed through the doorway and out to the street, storefront resolving in frame.","exterior",{t:"cta",max:30},"6-9")
+    ]},
+
+  { id:"pov-ugc", name:"Shot on a Phone", base:20,
+    obj:["ugc","trend","awareness","delivery"], tone:["raw","playful","hype","street"], styles:["Fast food","Fast casual","Café / Coffee shop","Casual dining","Dessert shop","Food truck","Cloud kitchen"],
+    why:"Deliberately unpolished, filmed as if by a customer holding a phone one-handed. Reads as a recommendation rather than an advert, which is exactly why it outperforms polished work on cold audiences.",
+    look:{lens:"Phone main camera equivalent, 26mm, everything in focus, slight lens softness at the edges",film:"Phone sensor look — mild highlight clipping, visible noise in shadows, auto-exposure hunting slightly",grade:"Untouched phone colour. Slightly cool, slightly oversharpened. Do not grade this like cinema",grain:"Phone-sensor noise, especially indoors",motion:"Handheld one-handed. Small corrections, a little shake, occasional focus hunt. Never smooth"},
+    slots:[
+      sl("hook",2.5,"Phone lifts up from the table to reveal the food, framing slightly off, corrected mid-shot.","dish",{t:"hook",max:24},"0"),
+      sl("establish",3,"Quick pan around the table and the room, the way someone actually shows a friend where they are.","interior",null,"6-8"),
+      sl("beat",3.5,"Phone held over the dish, one hand reaching in to break, pull or dip it.","dish",null,"7-9"),
+      sl("human",3.5,"Bite taken, phone still filming, slight wobble as they react.","none",null,"7-9"),
+      sl("beat",3.5,"Camera turns to a second dish across the table, refocusing as it lands.","dish",null,"7-9"),
+      sl("cta",4,"Phone lowers to the table or turns toward the storefront, ending mid-motion.","exterior",{t:"cta",max:30},"7-10")
+    ]},
+
+  { id:"asmr", name:"Sound First", base:22, kits:["oven","frozen","drink","cold","pass","fire"],
+    obj:["asmr","dish","trend","craft"], tone:["premium","luxe","moody","appetite"], styles:["Dessert shop","Bakery / Patisserie","Café / Coffee shop","Fine dining","Steakhouse","Juice / Smoothie bar","Seafood house"],
+    why:"No music, no voice. Sizzle, crunch, pour and scrape carry the whole thing. Watch time is unusually high because people wait for the next sound.",
+    look:{lens:"100mm macro almost exclusively, T2.8, extremely tight",film:"Clean high-resolution digital, texture-forward, no filtration",grade:"Natural and restrained, contrast moderate, texture never crushed",light:"Hard raking side light to bring out surface texture — crumb, char, condensation, crystal",grain:"None. Texture comes from the subject",motion:"Locked off, or the slowest possible push. The sound moves, the camera does not"},
+    slots:[
+      sl("hook",3,"Extreme macro on the crust, glaze or surface as it is broken. Sound leads, image follows.","dish",{t:"hook",max:22},"0"),
+      sl("beat",3.5,"Slow pour of sauce, syrup or oil, filling the frame, surface tension visible.","dish",null,"0"),
+      sl("prep",3.5,"Knife or spoon entering the dish, the exact moment of resistance and release.","dish",null,"0"),
+      sl("beat",3.5,"Steam escaping in raking light, particles visible against a dark ground.","dish",null,"0"),
+      sl("hero",4,"The hero dish complete, one slow push, no sound but the room.","dish",{t:"line",max:26},"0"),
+      sl("cta",4.5,"Hand lifts the first piece. Everything else silent. Frame holds after it leaves.","dish",{t:"cta",max:28},"0")
+    ]},
+
   { id:"proof-stack", name:"The Proof Stack", base:22,
-    obj:["awareness","offer","delivery"], tone:["appetite","street","warm"], styles:["Fast casual","Casual dining","Fast food","Cloud kitchen","Steakhouse","Seafood house"],
+    obj:["awareness","offer","delivery","showoff"], tone:["appetite","street","warm","hype"], styles:["Fast casual","Casual dining","Fast food","Cloud kitchen","Steakhouse","Seafood house"],
     why:"Reviews and ratings carried over food footage. Best when the restaurant already has strong numbers worth putting on screen.",
     look:{lens:"35mm and 85mm mixed, T2.8",film:"Clean digital, neutral, so the overlays stay readable",grade:"Balanced and bright, slightly desaturated backgrounds so text holds contrast",light:"Even soft key, deliberately simple, overlays are the hero",grain:"None",motion:"Steady slow moves under the text, nothing that fights the reading"},
     slots:[
@@ -1191,11 +1458,18 @@ const TEMPLATES = [
     ]}
 ];
 
-const TPL = { chosen:null, showAll:false };
+const TPL = { chosen:null, custom:null, showAll:false };
 
 /* ---- ranking ---- */
+function kitName(){ const k=kitFor(); return Object.keys(KITS).find(n=>KITS[n]===k) || "pass"; }
+function kitOK(t){ return !t.kits || t.kits.includes(kitName()); }
 function scoreTemplate(t){
   let s = 0; const why = [];
+  if(!kitOK(t)) {
+    const names = t.kits.map(k=>KITS[k].label);
+    const list = names.length>2 ? names.slice(0,2).join(", ")+" or similar" : names.join(" or ");
+    return {score:-999, why:["Built around "+list+" — this kitchen has "+kitFor().label], blocked:true};
+  }
   if(t.obj.includes(C.objective)){ s += 45; why.push("built for this objective"); }
   if(t.tone.includes(C.tone)){ s += 25; why.push("matches the tone"); }
   if(S.style && t.styles.includes(S.style)){ s += 20; why.push("suits a " + S.style.toLowerCase()); }
@@ -1212,13 +1486,15 @@ function countDishes(){ return S.menu.categories.flatMap(c=>c.items).filter(i=>i
 
 function renderTemplates(){
   const ranked = TEMPLATES.map(t=>({t, ...scoreTemplate(t)})).sort((a,b)=> b.score-a.score);
-  const list = TPL.showAll ? ranked : ranked.slice(0,3);
+  const usable = ranked.filter(r=>!r.blocked);
+  const list = TPL.showAll ? ranked : usable.slice(0,4);
   $("#recTitle").textContent = TPL.showAll ? "All templates, best match first" : "Recommended for this brief";
   $("#showAll").textContent = TPL.showAll ? "Show top three only" : "Show all templates";
   $("#tgrid").innerHTML = list.map((r,i)=>{
     const shots = r.t.slots.length;
-    const rank = (!TPL.showAll && i===0) ? '<span class="rank">Best match</span>' : "";
-    return '<button class="tcard" data-t="'+r.t.id+'" aria-pressed="'+(TPL.chosen&&TPL.chosen.id===r.t.id)+'">' +
+    const rank = r.blocked ? '<span class="rank blocked">Wrong kitchen</span>'
+                : ((!TPL.showAll && i===0) ? '<span class="rank">Best match</span>' : "");
+    return '<button class="tcard'+(r.blocked?" blocked":"")+'" data-t="'+r.t.id+'" aria-pressed="'+(TPL.chosen&&TPL.chosen.id===r.t.id)+'">' +
       '<span class="tthumb"><img src="thumbs/'+r.t.id+'.jpg" alt="" onerror="this.remove()">' +
       '<span class="ph">'+esc(r.t.name.toLowerCase().replace(/ /g,"_"))+'</span></span>' +
       '<span class="tbody">' + rank +
@@ -1247,7 +1523,8 @@ function chooseTemplate(id){
 
 function fitSlots(){
   if(!TPL.chosen) return;
-  const t = TEMPLATES.find(x=>x.id===TPL.chosen.id);
+  const t = TPL.chosen.id==="custom" ? TPL.custom : TEMPLATES.find(x=>x.id===TPL.chosen.id);
+  if(!t) return;
   const base = t.slots.reduce((a,s)=>a+s.dur,0);
   const k = (C.target_secs||base) / base;
   TPL.chosen.slots.forEach((s,i)=>{
@@ -1266,7 +1543,7 @@ function renderSlots(){
     return '<div class="slot'+(over?" over":"")+'">' +
       '<span class="n">'+s.n+"</span>" +
       '<span class="role">'+esc(label)+"<small>"+esc(sub)+"</small></span>" +
-      '<span class="desc"><b>'+esc(s.shot)+"</b><br>"+esc(asset)+esc(ov)+
+      '<span class="desc"><b>'+esc(adapt(s.shot))+"</b><br>"+esc(asset)+esc(ov)+
         (over? "<br><span style='color:var(--menu-red)'>Longer than one clip on this model — split it into two shots.</span>":"")+"</span>" +
       '<span class="dur"><input type="number" step="0.5" min="1" value="'+s.dur+'" data-slot="'+s.n+'"> s</span>' +
     "</div>";
@@ -1417,6 +1694,166 @@ function setLock(){
   L.push("• Occupancy: the room stays equally busy from first shot to last.");
   return L.join("\n");
 }
+/* ---- what the AI will actually hand back, in one line ---- */
+function expectation(s, subj){
+  const room = S.visual_identity.interior_style ? "their room" : "the dining room";
+  const dish = subj || "the dish";
+  const byRole = {
+    hook:{w:"HOOK", t:"The first frame that stops the scroll — "+dish+" at maximum appetite, tight and immediate. No context, no wide shot, just the thing itself."},
+    establish:{w:"ESTABLISH", t:"A read on the place — "+room+" and its layout, so the viewer knows where they are before anything is sold to them."},
+    ambience:{w:"AMBIENCE", t:"Texture and mood — light across surfaces, details of the decor, the feeling of the room rather than its floor plan."},
+    prep:{w:"CRAFT", t:"Hands and heat — "+dish+" being made, showing skill and effort. This is the shot that justifies the price."},
+    hero:{w:"HERO", t:"The money shot — "+dish+" complete and perfect, given more time and more camera movement than anything else in the reel."},
+    beat:{w:"BEAT", t:"A supporting appetite moment on "+dish+" — a pour, a pull, a cut or a crunch, kept short to hold attention between the bigger shots."},
+    human:{w:"REACTION", t:"Someone eating and responding — hands, jaw and body language carrying the pleasure. Faces stay soft or out of frame."},
+    proof:{w:"PROOF", t:"Evidence the place is real and busy — a full room, a queue, or a rating sitting over the footage."},
+    offer:{w:"OFFER", t:"The deal, held clean and readable. Minimal motion so the number is the only thing the eye does."},
+    cta:{w:"CLOSE", t:"The exit — the camera settles or pulls away, and the name, location and number land while the viewer is still warm."}
+  };
+  const special = {
+    "menu-morph":{beat:["MORPH","One dish dissolves and the next builds in exactly the same spot, in one unbroken take. The transformation is the effect, so the camera must not cut."]},
+    "photo-burst":{hook:["BURST","Ten stills of "+dish+" flashing past in about three seconds — same table, same light, a different angle every frame."],
+                   prep:["SEQUENCE","Ten frames stepping through the cook, so the process reads as one continuous memory rather than separate shots."]},
+    "reunion":{beat:["MEMORY","A visibly older, softer, grainier timeline. It has to read as the past on sight, before anyone reads a word."]},
+    "impossible":{beat:["IMPOSSIBLE MOVE","A camera path no real rig could achieve — through, inside or out of the subject in one continuous move."],
+                  hook:["IMPOSSIBLE MOVE","The camera passes through something solid. This is the shot people rewind to check what they just saw."]},
+    "asmr":{beat:["SOUND","The image serves the audio here — texture, resistance and release in macro, with no music underneath."],
+            hook:["SOUND","A single satisfying break or crack, carried entirely by the sound design."]},
+    "pov-ugc":{hook:["PHONE POV","Looks like a customer filmed it one-handed. Slightly off framing and a small correction mid-shot are the point, not a fault."]},
+    "speed-run":{beat:["SNAP","On screen for under two seconds. It has to land instantly or it is wasted."]}
+  };
+  const sp = TPL.chosen && special[TPL.chosen.id] && special[TPL.chosen.id][s.role];
+  if(sp) return {w:sp[0], t:sp[1]};
+
+  /* a hook on a room is not a hook on a plate — describe what is actually in frame */
+  const bySubject = {
+    interior:"the room itself — layout, seating and the light in it",
+    exterior:"the frontage from the street, so it can be recognised on sight",
+    kitchen:"heat and hands at work — flame, steam and the moment it transforms",
+    staff:"hands working, faces out of frame",
+    drink:"the glass, backlit, with condensation or a pour in progress",
+    delivery:"the packaging, closed and then opened",
+    logo:"a clean plate for the brand mark, composited on afterwards",
+    dessert:dish+", whole and then broken into"
+  };
+  const base = byRole[s.role] || {w:String(s.role).toUpperCase(), t:"A supporting shot."};
+  const subjectLine = bySubject[s.asset];
+  if(subjectLine && s.role!=="cta" && s.role!=="proof" && s.role!=="ambience"){
+    return {w:base.w, t:"Expect " + subjectLine + ". " + ({
+      hook:"It has to hold attention on its own — nothing before it and no context after.",
+      establish:"This is the shot that tells the viewer where they are.",
+      prep:"This is the shot that justifies the price.",
+      hero:"Given more time and more camera movement than anything else in the reel.",
+      beat:"Short, used to hold attention between the bigger shots.",
+      human:"Body language carries it, not expression."
+    }[s.role] || "")};
+  }
+  return base;
+}
+
+/* ---- how to actually shoot it, for the Shoot and animate path ---- */
+const SHOOT = {
+  dish:{
+    what:"One plate, filling the frame, shot before it cools.",
+    angle:"45° for anything with height, straight overhead for flat plates and spreads. Get the lens down to plate level rather than looking down from standing.",
+    light:"One window to the side or slightly behind the plate. Never front-on, never the ceiling light, never flash — backlight is what makes steam and glaze read.",
+    device:"Main camera at 1x. Do not use the 0.5x ultrawide: it bends the plate edges and softens the middle.",
+    settings:"Tap the food to focus, then hold to lock it. Slide exposure down about a third — slightly dark food looks rich, bright food looks flat. Turn off beauty mode and auto-HDR. Shoot 4K at 24 or 30fps.",
+    tip:"Stand a sheet of white paper opposite the window to bounce light into the shadow side. Costs nothing, does more than any filter.",
+    avoid:"The overhead ceiling light directly above the plate. It flattens the food and drops your own shadow into frame."
+  },
+  interior:{
+    what:"A wide of the room showing the layout and how it feels to sit there.",
+    angle:"Chest height, back into a corner for depth. Keep verticals straight — tilting up bends the walls.",
+    light:"Shoot at service light levels, not with the house lights blazing. Switch the practicals on even during the day.",
+    device:"0.5x ultrawide is allowed here, and only here. Keep it level or the distortion gets obvious.",
+    settings:"Lock exposure on a mid-tone wall, not on a window, or the room goes black. Brace against a chair back or use a small tripod.",
+    tip:"Dress two or three tables even if the room is empty. An empty restaurant photographs as a closed restaurant.",
+    avoid:"Filming into a bright window with no fill. You get a silhouette and a blown-out rectangle."
+  },
+  exterior:{
+    what:"The frontage, so a customer can recognise it from the street.",
+    angle:"Straight on from across the road, phone level. Include enough pavement to place it.",
+    light:"Blue hour — roughly twenty minutes after sunset, with the sign and interior lights on. This one choice is the biggest quality jump available to you.",
+    device:"Main camera at 1x. Night mode off for video.",
+    settings:"Lock exposure on the sign so it does not pulse as cars pass. Brace against a wall or a pole; handheld at dusk shows every tremor.",
+    tip:"Shoot it three ways: doors closed, someone walking in, and a wider one with street life. The middle usually cuts best.",
+    avoid:"Midday sun. Hard shadows across a frontage read as cheap whatever the building looks like."
+  },
+  kitchen:{
+    what:"The heat moment — grill, pan, oven or fryer, mid-service.",
+    angle:"Close and slightly low so flame and steam rise through the frame. Get behind the pass if it is safe to.",
+    light:"Let the fire and the service lights do the work. Kill any overhead fluorescent you can, it turns everything green.",
+    device:"Main camera at 1x. Wipe the lens between takes — kitchen grease is invisible until you watch it back.",
+    settings:"Lock exposure to the food, not the flame, or the whole frame crushes. Shoot 60fps so you can slow the flame to half speed in the edit.",
+    tip:"Ask the chef to run the action three times. The first is stiff, the second is right, the third is faster and often better.",
+    avoid:"Standing back. Kitchen shots die at distance — everything worth having is within a metre."
+  },
+  staff:{
+    what:"Hands working — plating, pouring, wrapping, carrying.",
+    angle:"Over the shoulder or straight down onto the hands. Frame the face out unless you hold a signed release.",
+    light:"Side light, same as the dish. Watch that the hands are not throwing a shadow across the plate.",
+    device:"Main camera at 1x, at the distance where the hands fill about two thirds of the frame.",
+    settings:"Focus on the hands and lock it. Hands move fast and autofocus will hunt at exactly the wrong moment.",
+    tip:"Have them work slower than feels natural. Real service speed reads as a blur on a phone sensor.",
+    avoid:"Filming during an actual rush. Stage it between covers so nobody is hurried and nothing gets dropped."
+  },
+  drink:{
+    what:"One glass, ideally with ice, condensation, or a pour in progress.",
+    angle:"Straight on at glass height, not looking down. Light coming through the liquid.",
+    light:"Window directly behind the glass, diffused. This is the one subject where full backlight always wins.",
+    device:"Main camera at 1x, as close as it will hold focus.",
+    settings:"Lock exposure on the glass. 60fps for pours so they can be slowed down.",
+    tip:"Wipe the glass, then mist it with a water spray bottle for instant condensation.",
+    avoid:"A dry glass under warm light. It reads as room temperature and kills the appetite instantly."
+  },
+  dessert:{
+    what:"The dessert whole, then the moment it is broken into.",
+    angle:"45° for the whole, macro for the break. Both, always.",
+    light:"Side light with a bounce card. Raking light is what makes crumb and layers visible.",
+    device:"Main camera at 1x. Switch to macro only for the break if your phone has it.",
+    settings:"Lock focus on the spoon entry point before the action starts. 60fps.",
+    tip:"Shoot the whole dessert first. You get one break and you cannot go backwards.",
+    avoid:"Letting ice cream or cream sit under lights while you frame up. Plate it last, shoot it immediately."
+  },
+  delivery:{
+    what:"The packaging — bag, box, sleeve — closed, then open.",
+    angle:"Slightly above, three-quarter view, on a clean surface with nothing else in frame.",
+    light:"Soft and even. Packaging carries printed detail and hard light makes it unreadable.",
+    device:"Main camera at 1x.",
+    settings:"Standard exposure. Nothing clever needed here.",
+    tip:"Use fresh, unfolded packaging. Creases and grease marks are the first thing a viewer notices.",
+    avoid:"Clutter behind the bag. Clear everything out of frame."
+  },
+  logo:{
+    what:"The logo file itself, not a photograph of a sign.",
+    angle:"Not a shot — this is a file request.",
+    light:"Not applicable.",
+    device:"Ask for vector artwork: .ai, .eps or .svg. A transparent .png at 2000px or larger is the fallback.",
+    settings:"Not applicable.",
+    tip:"Ask for the dark-background version as well as the light one. You will need both before the job is finished.",
+    avoid:"A logo screenshotted from their website or pulled off Instagram. It goes soft the moment it is on screen."
+  }
+};
+
+function shootBrief(s, subj){
+  const g = SHOOT[s.asset]; if(!g) return null;
+  return [
+    "WHAT TO SHOOT",
+    g.what + (subj ? " Dish: " + subj + "." : ""),
+    "Framing for this slot: " + adapt(s.shot),
+    "", "ANGLE", g.angle,
+    "", "LIGHT", g.light,
+    "", "DEVICE", g.device,
+    "", "PHONE SETTINGS", g.settings,
+    "", "TIP", g.tip,
+    "", "COMMON MISTAKE", g.avoid,
+    "", "COVERAGE",
+    "Hold it for at least " + Math.ceil(s.dur + 3) + " seconds so there is handle at both ends. Shoot it three times and keep all three.",
+    "Frame " + C.aspect + " — film vertical, do not shoot wide and crop later."
+  ].join("\n");
+}
+
 function shotPrompt(s, subj, prev){
   const m = M(), T = TPL.chosen, L = T.look;
   const room = S.visual_identity.interior_style, plate = S.visual_identity.plating_style;
@@ -1427,7 +1864,7 @@ function shotPrompt(s, subj, prev){
   out.push("SHOT " + s.n + " OF " + T.slots.length + " — " + (ROLE_LABEL[s.role]||[s.role])[0] + " — " + s.dur + "s — " + C.aspect);
   out.push("");
   out.push("SUBJECT");
-  let subject = s.shot;
+  let subject = adapt(s.shot);
   if(subj) subject = subject.replace(/the (hero dish|dish|plate|food|second dish|centrepiece dish|hero item|most reviewed dish)/i, subj);
   out.push(subject);
   if(subj) out.push("The dish is " + subj + (cuisine ? ", " + cuisine + "." : "."));
@@ -1553,19 +1990,46 @@ function renderAssets(){
 function renderPack(map){
   const T = TPL.chosen, m = M();
   map = map || subjects();
-  $("#packNote").textContent = C.mode==="fullai"
-    ? "One complete prompt per shot, each carrying the identical style lock. Generate them in order — every prompt after the first refers back to the one before it, which is what stops the look drifting."
-    : "One prompt per shot, written for image-to-video against the photo that slot uses. The style lock grades the footage without overriding the real room.";
+  const hybrid = C.mode !== "fullai";
+  $("#packNote").textContent = hybrid
+    ? "Two panels per shot: what to film, and the prompt that animates it. The style lock grades the footage without overriding the real room."
+    : "One complete prompt per shot, each carrying the identical set lock and style lock. Generate them in order — every prompt after the first refers back to the one before, which is what stops the look drifting.";
+
   $("#pack").innerHTML = T.slots.map((s,i)=>{
-    const txt = shotPrompt(s, map[s.n], i>0 ? T.slots[i-1].n : null);
-    const label = (ROLE_LABEL[s.role]||[s.role])[0];
+    const subj = map[s.n];
+    const ex = expectation(s, subj);
+    const ai = shotPrompt(s, subj, i>0 ? T.slots[i-1].n : null);
+    const sh = hybrid ? shootBrief(s, subj) : null;
+    const bars = [];
+    if(sh) bars.push({k:"shoot", label:"What to film", body:sh});
+    bars.push({k:"ai", label: sh ? "Prompt to animate it" : "Prompt", body:ai});
+
     return '<div class="shot" data-open="'+(i===0)+'">' +
-      '<div class="shot-h"><span class="n">'+s.n+'</span><b>'+esc(label)+'</b>' +
-      '<span class="meta">'+s.dur+"s"+(map[s.n]?" · "+esc(map[s.n]):"")+"</span></div>" +
-      "<pre>"+esc(txt)+"</pre></div>";
+      '<div class="shot-h"><span class="n">'+s.n+'</span>' +
+        '<span class="hgroup"><b>'+esc(ex.w)+'</b><small>'+esc(ex.t)+'</small></span>' +
+        '<span class="meta">'+s.dur+"s"+(subj?" · "+esc(subj):"")+"</span></div>" +
+      '<div class="shot-body">' + bars.map(b=>
+        '<div class="bar" data-kind="'+b.k+'">' +
+          '<div class="bar-h"><span>'+b.label+'</span>' +
+            '<button class="ghost tiny copybox" data-copy="'+esc(b.body).replace(/"/g,"&quot;")+'">Copy</button></div>' +
+          "<pre>"+esc(b.body)+"</pre></div>").join("") +
+      "</div></div>";
   }).join("");
-  $$("#pack .shot-h").forEach(h=> h.addEventListener("click", ()=>{
+
+  $$("#pack .shot-h").forEach(h=> h.addEventListener("click", e=>{
+    if(e.target.closest("button")) return;
     const p = h.parentElement; p.dataset.open = p.dataset.open==="true" ? "false" : "true";
+  }));
+  $$("#pack .copybox").forEach(b=> b.addEventListener("click", async e=>{
+    e.stopPropagation();
+    const txt = b.parentElement.parentElement.querySelector("pre").textContent;
+    try{ await navigator.clipboard.writeText(txt); }
+    catch(err){
+      const ta=document.createElement("textarea"); ta.value=txt; document.body.appendChild(ta);
+      ta.select(); try{document.execCommand("copy");}catch(x){} ta.remove();
+    }
+    const old = b.textContent; b.textContent = "Copied";
+    setTimeout(()=>{ b.textContent = old; }, 1400);
   }));
 }
 
@@ -1615,6 +2079,136 @@ $("#copyAssets").addEventListener("click", async ()=>{
   catch(e){ mark("#assetStatus","Copy blocked here.",false); }
 });
 
+/* ================= CUSTOM IDEA → TEMPLATE ================= */
+function ideaPromptText(){
+  const idea = $("#ideaIn").value.trim() || "(describe your idea in the box above)";
+  const m = M();
+  const dishes = S.menu.categories.flatMap(c=>c.items).filter(i=>i.name.trim());
+  const heroes = dishes.filter(i=>i.bestseller||i.toprated).map(i=>i.name);
+  const roles = Object.keys(ROLE_LABEL).join(", ");
+  const assets = Object.keys(ASSET_INFO).join(", ");
+  return [
+"You are a commercial director breaking a concept into a shot list for an AI-generated restaurant reel.",
+"",
+"THE IDEA",
+idea,
+"",
+"THE RESTAURANT",
+"Name: " + (S.name || "not given"),
+"Style: " + (S.style || "not given") + (split(S.cuisines).length ? " · " + split(S.cuisines).join(", ") : ""),
+"City: " + (S.location.city || "not given"),
+"Room: " + (S.visual_identity.interior_style || "not described"),
+"Light: " + (S.visual_identity.lighting || "not described"),
+"Serveware: " + (S.visual_identity.plating_style || "not described"),
+heroes.length ? "Dishes to feature: " + heroes.join(", ") : "Dishes: none supplied, use generic descriptions",
+"",
+"THE CONSTRAINTS — these are hard",
+"1. Target runtime " + C.target_secs + " seconds, frame " + C.aspect + ".",
+"2. The engine is " + m.label + ", which generates a maximum of " + m.clip + " seconds per clip. No single shot may exceed that. Split anything longer into two shots.",
+"3. Aim for " + Math.max(4, Math.round(C.target_secs/3.5)) + " to " + Math.max(6, Math.round(C.target_secs/2.5)) + " shots. Fewer, longer shots read as more expensive; more, shorter shots read as more energetic. Match the idea.",
+"4. The tone is: " + C.tone + ". The objective is: " + C.objective + ".",
+"5. No shot may rely on readable on-screen text, a logo, or a price appearing in the generated footage. Those are composited afterwards. If the idea needs text, put it in the overlay field instead.",
+"",
+"WHAT TO RETURN",
+"A single JSON object, no commentary, no code fences, in exactly this shape:",
+"",
+"{",
+'  "template": {',
+'    "name": "short memorable name, 2-3 words",',
+'    "why": "one sentence on what makes this work",',
+'    "look": {',
+'      "lens": "focal lengths and aperture, e.g. 85mm macro and 50mm, T1.8",',
+'      "film": "sensor and capture character",',
+'      "grade": "colour treatment, contrast, where the blacks and highlights sit",',
+'      "light": "key direction, colour temperature, fill and falloff",',
+'      "grain": "grain and texture character",',
+'      "motion": "the camera language: what moves, how fast, what never happens"',
+'    },',
+'    "slots": [',
+'      {',
+'        "role": "one of: ' + roles + '",',
+'        "dur": 3.5,',
+'        "shot": "one or two sentences of camera direction: what is in frame, where the camera is, what moves. Concrete and filmable, not adjectives.",',
+'        "asset": "one of: ' + assets + '",',
+'        "overlay": { "t": "hook | line | price | offer | cta | proof", "max": 28 },',
+'        "vo": "8-11"',
+'      }',
+'    ]',
+'  }',
+"}",
+"",
+"FIELD RULES",
+'• "asset" is what real-world material that shot needs. Use "none" when the shot can be generated with nothing supplied.',
+'• "overlay" is null when no text appears on that shot. "max" is a character count that will fit the frame.',
+'• "vo" is a word range for voice-over on that shot, as a string like "8-11". Use "0" for shots that carry no words.',
+'• "dur" is seconds, one decimal place, and must total close to ' + C.target_secs + '.',
+"",
+"DIRECTION RULES",
+"Write the shot field the way a director talks to a camera operator. Say where the camera is, what it does, and what is in frame. Do not write feelings or outcomes — write the physical shot.",
+"Every shot must be achievable in a single unbroken clip. If your idea contains a cut, that is two slots, not one.",
+"The first shot has to work with no context at all, because most viewers never see the second.",
+"Return the JSON and nothing else."
+  ].join("\n");
+}
+
+$("#buildIdea").addEventListener("click", ()=>{
+  if(!$("#ideaIn").value.trim()){ mark("#ideaStatus","Describe the idea first.",false); $("#ideaOut").hidden=false; return; }
+  $("#ideaPrompt").textContent = ideaPromptText();
+  $("#ideaOut").hidden = false;
+  mark("#ideaStatus","",true);
+  scrollTo("#ideaPrompt");
+});
+$("#clearIdea").addEventListener("click", ()=>{ $("#ideaIn").value=""; $("#ideaOut").hidden=true; });
+$("#copyIdea").addEventListener("click", async ()=>{
+  try{ await navigator.clipboard.writeText($("#ideaPrompt").textContent); mark("#ideaStatus","Copied. Paste it into your AI, then bring the JSON back.",true); }
+  catch(e){ mark("#ideaStatus","Copy blocked — select the text and copy manually.",false); }
+});
+
+$("#loadIdea").addEventListener("click", ()=>{
+  const raw = $("#ideaBack").value;
+  if(!raw.trim()){ mark("#ideaBackStatus","Paste the JSON first.",false); return; }
+  try{
+    const obj = extractJSON(raw);
+    const t = obj.template || obj;
+    if(!Array.isArray(t.slots) || !t.slots.length) throw new Error("no slots in that JSON");
+    const roles = Object.keys(ROLE_LABEL), assets = Object.keys(ASSET_INFO);
+    const slots = t.slots.map((s,i)=>({
+      n: i+1,
+      role: roles.includes(s.role) ? s.role : "beat",
+      dur: Math.max(1, Number(s.dur) || 3),
+      shot: String(s.shot || "").trim() || "Shot direction missing — write it in.",
+      asset: assets.includes(s.asset) ? s.asset : "none",
+      overlay: (s.overlay && s.overlay.t) ? {t:String(s.overlay.t), max:Number(s.overlay.max)||28} : null,
+      vo: String(s.vo || "0"),
+      locked:false
+    }));
+    const look = t.look || {};
+    const fallback = TEMPLATES[0].look;
+    TPL.custom = {
+      id:"custom", name: (t.name || "Your idea").slice(0,40), base: slots.reduce((a,s)=>a+s.dur,0),
+      why: t.why || "Built from your own concept.",
+      obj:[C.objective], tone:[C.tone], styles:[],
+      look:{
+        lens: look.lens || fallback.lens, film: look.film || fallback.film,
+        grade: look.grade || fallback.grade, light: look.light || fallback.light,
+        grain: look.grain || fallback.grain, motion: look.motion || fallback.motion
+      },
+      slots: slots.map(s=>Object.assign({},s))
+    };
+    TPL.chosen = { id:"custom", name:TPL.custom.name, look:TPL.custom.look, why:TPL.custom.why,
+                   slots: slots };
+    renderSlots(); renderLock(); renderTemplates();
+    $("#tdetail").hidden = false;
+    $("#tdName").textContent = TPL.custom.name;
+    $("#tdNote").textContent = TPL.custom.why + " Built from your idea — adjust any slot length by hand below.";
+    const over = slots.filter(s=>s.dur > C.max_clip).length;
+    mark("#ideaBackStatus", over ? "Loaded, but "+over+" shot"+(over>1?"s are":" is")+" longer than one clip on this model — see the flags below." : "Loaded as a template.", !over);
+    scrollTo("#tdetail");
+  }catch(err){
+    mark("#ideaBackStatus","That did not parse — " + err.message + ".", false);
+  }
+});
+
 /* ---- combined export ---- */
 function fullBrief(){
   const b = brief();
@@ -1624,7 +2218,7 @@ function fullBrief(){
       id:TPL.chosen.id, name:TPL.chosen.name, style_lock:TPL.chosen.look, set_lock:setLock(),
       runtime: TPL.chosen.slots.reduce((a,s)=>a+s.dur,0),
       slots: TPL.chosen.slots.map(s=>({
-        n:s.n, role:s.role, seconds:s.dur, shot:s.shot,
+        n:s.n, role:s.role, seconds:s.dur, shot:adapt(s.shot),
         asset_needed:s.asset, overlay:s.overlay, vo_words:s.vo
       }))
     };
