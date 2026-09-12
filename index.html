@@ -259,6 +259,21 @@ button:focus-visible{outline:2px solid rgba(212,169,106,.6);outline-offset:2px}
 .img-verify-body{padding:12px 16px;display:grid;grid-template-columns:72px minmax(0,1fr);gap:12px;align-items:start}
 .img-thumb-sm{width:72px;height:54px;border-radius:4px;background:var(--navy);object-fit:cover;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;color:rgba(212,169,106,.3);font-size:10px;font-family:"IBM Plex Mono",monospace;cursor:pointer;overflow:hidden}
 .img-thumb-sm img{width:100%;height:100%;object-fit:cover}
+.img-thumb-strip{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.img-thumb-mini{position:relative;width:40px;height:40px;border-radius:4px;overflow:hidden;border:1px solid var(--line);display:inline-block}
+.img-thumb-mini img{width:100%;height:100%;object-fit:cover;display:block}
+.img-thumb-mini-del{position:absolute;top:0;right:0;width:16px;height:16px;line-height:16px;padding:0;border:none;background:rgba(27,42,53,.72);color:#fff;font-size:9px;cursor:pointer;border-radius:0 0 0 4px}
+.img-thumb-mini-del:hover{background:var(--red)}
+.img-thumb-add{width:40px;height:40px;border-radius:4px;border:1px dashed var(--line);display:flex;align-items:center;justify-content:center;color:var(--ink-soft);cursor:pointer;font-size:16px;background:var(--page-deep)}
+.img-thumb-add:hover{border-color:var(--gold-dim);color:var(--gold-dim)}
+.frame-row{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:10px 14px;border-top:1px dashed var(--line);background:var(--page-deep)}
+.frame-row-title{font-size:11.5px;color:var(--ink-soft);flex-basis:100%}
+.frame-slot{display:flex;align-items:center;gap:6px}
+.frame-thumb{position:relative;width:48px;height:36px;border-radius:4px;background:var(--navy);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;color:rgba(212,169,106,.4);cursor:pointer;overflow:hidden;font-size:14px}
+.frame-thumb img{width:100%;height:100%;object-fit:cover}
+.frame-del{position:absolute;top:0;right:0;width:14px;height:14px;line-height:14px;padding:0;border:none;background:rgba(27,42,53,.72);color:#fff;font-size:8px;cursor:pointer;border-radius:0 0 0 4px}
+.frame-del:hover{background:var(--red)}
+.frame-label{font-size:11.5px;color:var(--ink-soft)}
 .img-verify-checks{display:flex;flex-direction:column;gap:6px}
 .verify-item{display:flex;align-items:flex-start;gap:8px;font-size:12.5px;color:var(--ink-soft)}
 .verify-fix{font-size:12px;color:var(--red);margin-left:26px;line-height:1.5}
@@ -324,6 +339,21 @@ button:focus-visible{outline:2px solid rgba(212,169,106,.6);outline-offset:2px}
 .img-verify-body{padding:12px 16px;display:grid;grid-template-columns:72px minmax(0,1fr);gap:12px;align-items:start}
 .img-thumb-sm{width:72px;height:54px;border-radius:4px;background:var(--navy);object-fit:cover;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;color:rgba(212,169,106,.3);font-size:10px;font-family:"IBM Plex Mono",monospace;cursor:pointer;overflow:hidden}
 .img-thumb-sm img{width:100%;height:100%;object-fit:cover}
+.img-thumb-strip{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.img-thumb-mini{position:relative;width:40px;height:40px;border-radius:4px;overflow:hidden;border:1px solid var(--line);display:inline-block}
+.img-thumb-mini img{width:100%;height:100%;object-fit:cover;display:block}
+.img-thumb-mini-del{position:absolute;top:0;right:0;width:16px;height:16px;line-height:16px;padding:0;border:none;background:rgba(27,42,53,.72);color:#fff;font-size:9px;cursor:pointer;border-radius:0 0 0 4px}
+.img-thumb-mini-del:hover{background:var(--red)}
+.img-thumb-add{width:40px;height:40px;border-radius:4px;border:1px dashed var(--line);display:flex;align-items:center;justify-content:center;color:var(--ink-soft);cursor:pointer;font-size:16px;background:var(--page-deep)}
+.img-thumb-add:hover{border-color:var(--gold-dim);color:var(--gold-dim)}
+.frame-row{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:10px 14px;border-top:1px dashed var(--line);background:var(--page-deep)}
+.frame-row-title{font-size:11.5px;color:var(--ink-soft);flex-basis:100%}
+.frame-slot{display:flex;align-items:center;gap:6px}
+.frame-thumb{position:relative;width:48px;height:36px;border-radius:4px;background:var(--navy);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;color:rgba(212,169,106,.4);cursor:pointer;overflow:hidden;font-size:14px}
+.frame-thumb img{width:100%;height:100%;object-fit:cover}
+.frame-del{position:absolute;top:0;right:0;width:14px;height:14px;line-height:14px;padding:0;border:none;background:rgba(27,42,53,.72);color:#fff;font-size:8px;cursor:pointer;border-radius:0 0 0 4px}
+.frame-del:hover{background:var(--red)}
+.frame-label{font-size:11.5px;color:var(--ink-soft)}
 .img-verify-checks{display:flex;flex-direction:column;gap:6px}
 .verify-item{display:flex;align-items:flex-start;gap:8px;font-size:12.5px;color:var(--ink-soft)}
 .verify-fix{font-size:12px;color:var(--red);margin-left:26px;line-height:1.5}
@@ -697,6 +727,7 @@ body{background:var(--page);font-family:'Space Grotesk',sans-serif;color:var(--n
     </div>
   </div>
   <div id="admin-badge" class="admin-badge" onclick="if(_adminUnlocked)document.getElementById('admin-panel').scrollIntoView({behavior:'smooth'})">&#x26E1; Admin</div>
+  <button class="js-start-over" style="margin-left:auto;background:none;border:1px solid rgba(212,169,106,.3);color:rgba(212,169,106,.7);font:inherit;font-size:11.5px;letter-spacing:.06em;padding:7px 14px;border-radius:99px;cursor:pointer;white-space:nowrap" title="Clears everything saved in this browser and starts a blank brief">&#8635; Start over</button>
 </header>
 
 <nav class="rail" aria-label="Steps">
@@ -708,6 +739,8 @@ body{background:var(--page);font-family:'Space Grotesk',sans-serif;color:var(--n
       <li><button data-go="s4"><span class="num">4</span><span>Assets to shoot</span></button></li>
     </ol>
     <p class="hint">The template sets the shot count and lengths. Everything after it — script beats, asset list, prompts — is derived from those slots.</p>
+    <p class="hint" style="margin-top:14px;padding-top:14px;border-top:1px solid var(--line)">Everything you enter is saved automatically in this browser, so a refresh or coming back later returns you to the same page with the same data. Nothing is sent anywhere.</p>
+    <button class="js-start-over ghost tiny" style="margin:8px 12px 0;width:calc(100% - 24px)" title="Clears everything saved in this browser and starts a blank brief">Start over</button>
   </nav>
 
   <main class="stage">
@@ -1108,6 +1141,7 @@ body{background:var(--page);font-family:'Space Grotesk',sans-serif;color:var(--n
       <div class="row-actions">
         <button class="act" id="copyPack">Copy all shot prompts</button>
         <button class="ghost" id="dlPack">Download the prompt pack</button>
+        <button class="ghost" id="dlZip">Download ZIP (prompts + photos)</button>
         <span class="status" id="packStatus"></span>
       </div>
       <div class="launch">
@@ -1550,7 +1584,7 @@ $$("[data-c]").forEach(el=>{
 /* ---- what each engine can actually do, and what that means for the prompt ---- */
 const MODELS = {
   omni:{
-    label:"Gemini Omni 1.1 Flash", clip:10, audio:true, refs:7, frames:true, extend:true,
+    label:"Gemini Omni 1.1 Flash", clip:10, audio:true, refs:7, frames:true, extend:true, negatives:false,
     good:["Native synchronised audio — ambience, sizzle and music come out of the same pass, no separate sound job",
           "Up to 7 reference images per call, so the same dish and the same room carry across every shot",
           "First and last frame can both be pinned, which turns a transition into one generation instead of a lucky cut",
@@ -1559,16 +1593,18 @@ const MODELS = {
     bad:["1080p and 4K are upscaled, not generated natively, so fine plate detail can soften",
          "Per-second pricing means long slots get expensive fast — draft at 360p first",
          "Native audio will invent dialogue if you leave the audio direction vague",
-         "Reference images steer hard: a badly lit source photo drags the whole shot toward it"],
+         "Reference images steer hard: a badly lit source photo drags the whole shot toward it",
+         "Negative instructions are unreliable — telling it \"no text\" can sometimes add text instead of removing it"],
     prompting:["Write one audio line per shot or the model will improvise speech",
                "Attach the same reference set to every call — that is what holds the look together",
                "Chain shots with the last frame of the previous clip as the first frame of the next",
-               "Draft at 360p, review the cut, then re-run only the keepers at 1080p"]
+               "Draft at 360p, review the cut, then re-run only the keepers at 1080p",
+               "State what you want, never what you don't — say \"plain wall, no signage\" as \"a bare, unmarked wall\", not as a list of no's. This tool writes this model's prompts that way automatically."]
   },
-  veo:{label:"Veo 3.1", clip:8, audio:true, refs:3, frames:true, extend:true,
+  veo:{label:"Veo 3.1", clip:8, audio:true, refs:3, frames:true, extend:true, negatives:false,
     good:["Native audio","Strong physical realism on food and liquid","Last-frame control for chaining"],
-    bad:["Short clip ceiling","Tighter reference image budget than Omni"],
-    prompting:["One audio line per shot","Keep camera direction to a single move per clip"]},
+    bad:["Short clip ceiling","Tighter reference image budget than Omni","Same Gemini-family quirk with negatives — it can invert a \"no X\" instruction"],
+    prompting:["One audio line per shot","Keep camera direction to a single move per clip","State constraints positively, never as a \"no\" list — this tool does that for you automatically"]},
   kling:{label:"Kling", clip:10, audio:false, refs:4, frames:true, extend:true,
     good:["Long clips","Good motion on human hands","Start and end frame control"],
     bad:["No native audio, sound is a separate job","Colour drifts between generations"],
@@ -2464,7 +2500,24 @@ function shootBrief(s, subj, img){
   ].join("\n");
 }
 
-function shotPrompt(s, subj, prev, man){
+function frameNoteFor(s){
+  var f = (window._frameUploads||{})[s.n];
+  if(!f || (!f.start && !f.end)) return null;
+  var bits = [];
+  if(f.start) bits.push("START FRAME attached (" + f.start.name + ") — the clip must begin on exactly this frame.");
+  if(f.end) bits.push("END FRAME attached (" + f.end.name + ") — the clip must land on exactly this frame.");
+  return bits.join(" ");
+}
+function cameraPhysicsLine(T){
+  if(T.id==="impossible") return "This template's camera move is deliberately impossible — no physical rig could make it, and that is the point. Keep the camera move exactly this bold. But everything the camera passes through or past (food, liquid, steam, hands, equipment) must still obey real material physics: it deforms, splashes, drips and reacts exactly as the real thing would.";
+  return "The camera itself obeys physics: a real operator, gimbal, slider or drone could make this exact move at this exact speed. No teleporting, no passing through solid objects, no instant changes of direction.";
+}
+function firstSentence(text){
+  var t = String(text||"").trim();
+  var m = t.match(/^(.*?[.!?])(\s|$)/);
+  return m ? m[1] : t;
+}
+function shotPrompt(s, subj, prev, man, next){
   const m = M(), T = TPL.chosen, L = T.look;
   man = man || imageManifest();
   const img = imageForSlot(s.n, man);
@@ -2474,6 +2527,13 @@ function shotPrompt(s, subj, prev, man){
   const out = [];
 
   out.push("SHOT " + s.n + " OF " + T.slots.length + " — " + (ROLE_LABEL[s.role]||[s.role])[0] + " — " + s.dur + "s — " + C.aspect);
+
+  out.push("");
+  out.push("CAMERA — read this first, it governs everything below");
+  out.push("Lens: " + L.lens + ". House move for this template: " + L.motion + ".");
+  out.push("This shot's move: " + firstSentence(adapt(s.shot)));
+  out.push(cameraPhysicsLine(T));
+
   out.push("");
   out.push("SUBJECT");
   if(img) out.push((C.mode==="hybrid" ? "Uses " : "Reference ") + img.id + " — " + img.label + ".");
@@ -2485,6 +2545,21 @@ function shotPrompt(s, subj, prev, man){
   if(s.asset==="exterior" && S.location.city) out.push("Street context reads as " + S.location.city + (S.location.country?", "+S.location.country:"") + ".");
   if((s.asset==="dish"||s.asset==="dessert") && plate) out.push("Served on " + plate + ".");
   if(C.must_include.trim() && s.n===1) out.push("Must be visible somewhere in the reel: " + C.must_include.trim() + ".");
+
+  out.push("");
+  out.push("PHYSICAL REALISM — one director and one editor wrote this shot together, so it has to survive both jobs");
+  out.push("Liquids and steam obey gravity: liquid falls and pools, steam and smoke rise and disperse, nothing floats, hangs or runs in reverse.");
+  out.push("A hand or utensil makes contact with an object before it moves, tips, lifts, pours or opens — nothing moves on its own.");
+  out.push("Cloth, hair, flame and steam react naturally to the camera's own move and to the air already implied in the shot.");
+  out.push("Any person in frame moves with continuous, weighted motion — no unnaturally instant starts or stops, no impossible joint angles, hands that actually grip rather than hover near the object.");
+  out.push("Scale and material stay constant: a plate, glass, cut of meat or utensil is the same size and the same material in every frame it appears in.");
+
+  out.push("");
+  out.push("FLOW — how this shot cuts against its neighbours");
+  if(prev) out.push("In from shot " + prev + ": continue its motion direction and its energy. Do not reset the framing cold on the cut.");
+  else out.push("Opens the reel: full energy from frame one, no slow build before it.");
+  if(next) out.push("Out to shot " + next + ": end on a frame and a motion that hands off cleanly — matching direction of travel, or a natural pause — not a hard stop that fights the next cut.");
+  else out.push("Closes the reel: let the motion settle rather than cutting away sharply.");
 
   out.push("");
   out.push("SET LOCK — identical in every shot, do not vary");
@@ -2522,6 +2597,8 @@ function shotPrompt(s, subj, prev, man){
     out.push("No reference images provided. Interpret the SET LOCK strictly and conservatively.");
     out.push("Default to a simple, mid-range real restaurant — not aspirational, not VIP, not cinematic-clean.");
   }
+  var frameNote = frameNoteFor(s);
+  if(frameNote) out.push(frameNote);
   if(m.frames && prev) out.push("First frame: the last frame of shot "+prev+". Generate the move outward from it. Match colour grade and room exactly.");
   else if(prev) out.push("Match shot "+prev+" exactly — same room, same colour temperature, same exposure, same materials. Do not drift.");
   out.push("Time of day, light colour and room appearance are constant across the entire reel.");
@@ -2533,11 +2610,19 @@ function shotPrompt(s, subj, prev, man){
   }
 
   out.push("");
-  out.push("NEGATIVE — hard failures, regenerate if any of these appear");
-  const baseNeg = "No on-screen text, no lettering, no signage copy, no logos, no readable menus or price tags. No faces in focus. No warped hands or extra fingers. No plastic or waxy food. No HDR oversaturation. No stock-photo smiling. No floating objects. No duplicated cutlery.";
-  const accuracyNeg = " No VIP booths, velvet ropes, chandelier lighting, marble surfaces, luxury finishes or any premium elements not present in the reference images. No larger space than the source. No aspirational upgrades. No invented decor. The room must match the reference images in size, style and materials — if it looks like a different and better restaurant, it is wrong.";
-  const avoidNeg = C.avoid.trim() ? " Also keep out: "+C.avoid.trim()+"." : "";
-  out.push(baseNeg + accuracyNeg + avoidNeg);
+  if(m.negatives===false){
+    out.push("REQUIRED — say only what should be true (" + m.label + " reads negative instructions unreliably, sometimes doing the opposite)");
+    const baseReq = "Keep every surface in frame plain and unmarked: blank walls, unlabelled packaging, clean tabletops — nothing readable anywhere in shot, no logos, no signage, no menu or price text. Keep faces soft, turned away, or out of focus. Hands are anatomically correct — five fingers each, natural and relaxed. Food looks fresh, matte where matte is right and moist where moist is right, never plastic or glossy. Exposure and colour stay natural, matching the STYLE LOCK exactly, with no artificial HDR punch. Every object rests in contact with a real surface at all times. Cutlery, glassware and plates each appear exactly once, undistorted.";
+    const accuracyReq = " Keep the room exactly as modest or as grand as the reference images show — same fixtures, same surfaces, same size as the source, nothing grander, nothing invented.";
+    const avoidReq = C.avoid.trim() ? " Also stay well clear of: "+C.avoid.trim()+"." : "";
+    out.push(baseReq + accuracyReq + avoidReq);
+  } else {
+    out.push("NEGATIVE — hard failures, regenerate if any of these appear");
+    const baseNeg = "No on-screen text, no lettering, no signage copy, no logos, no readable menus or price tags. No faces in focus. No warped hands or extra fingers. No plastic or waxy food. No HDR oversaturation. No stock-photo smiling. No floating objects. No duplicated cutlery.";
+    const accuracyNeg = " No VIP booths, velvet ropes, chandelier lighting, marble surfaces, luxury finishes or any premium elements not present in the reference images. No larger space than the source. No aspirational upgrades. No invented decor. The room must match the reference images in size, style and materials — if it looks like a different and better restaurant, it is wrong.";
+    const avoidNeg = C.avoid.trim() ? " Also keep out: "+C.avoid.trim()+"." : "";
+    out.push(baseNeg + accuracyNeg + avoidNeg);
+  }
 
   if(s.overlay){
     out.push("");
@@ -2616,31 +2701,39 @@ function renderAssets(){
     none:[],
   };
   const uploadInputId = "img-verify-upload";
-  $("#assetList").innerHTML = '<input type="file" id="'+uploadInputId+'" accept="image/*" style="display:none">' +
+  $("#assetList").innerHTML = '<input type="file" id="'+uploadInputId+'" accept="image/*" multiple style="display:none">' +
+  '<p class="note" style="margin:0 0 14px">In plain terms: each numbered box below is one real subject — a dish, the dining room, the storefront. Click a box to attach one or more photos of that exact subject. Every shot below that needs it will say so by number, so you always know which photo the prompt is using.</p>' +
   man.map(e=>{
     const isRef = g.includes(e.id);
     const checks = CHECKS[e.code] || [];
-    const hasUpload = !!(window._verifyUploads && window._verifyUploads[e.n]);
+    const entry = (window._verifyUploads && window._verifyUploads[e.n]) || null;
+    const imgs = entry && Array.isArray(entry.images) ? entry.images : [];
+    const hasUpload = imgs.length > 0;
     const checkRows = checks.map((c,ci)=>{
       const ck = hasUpload ? 'ok' : (ci===0 ? 'warn' : 'warn');
       return '<div class="verify-item"><span class="vcheck '+ck+'"></span><span>'+esc(c)+'</span></div>';
     }).join('');
     const thumbHtml = hasUpload
-      ? '<img src="'+window._verifyUploads[e.n].url+'" alt="'+esc(e.id)+'">'
+      ? '<img src="'+imgs[0].url+'" alt="'+esc(e.id)+'">'
       : '<span>Click to<br>attach</span>';
+    const stripHtml = imgs.length ? ('<div class="img-thumb-strip">' +
+      imgs.map((im,ii)=> '<span class="img-thumb-mini"><img src="'+im.url+'" alt=""><button type="button" class="img-thumb-mini-del" onclick="event.stopPropagation();removeVerifyImage('+e.n+','+ii+')" title="Remove this photo">&#x2715;</button></span>').join('') +
+      '<span class="img-thumb-add" onclick="triggerVerifyUpload('+e.n+')" title="Add another photo of this subject">+</span>' +
+    '</div>') : '';
     return '<div class="img-verify">' +
       '<div class="img-verify-head">' +
         '<span class="imgnum">'+e.n+'</span>' +
         '<span class="vname">'+esc(e.id)+' · '+esc(e.label)+'</span>' +
         '<span class="vslots">shots '+e.slots.join(", ")+(isRef?' · <b style="color:var(--gold-dim)">global ref</b>':'')+'</span>' +
-        '<span class="vcheck '+(hasUpload?'ok':'bad')+'" style="margin-left:8px" title="'+(hasUpload?'Image attached':'No image attached')+'"></span>' +
+        '<span class="vcheck '+(hasUpload?'ok':'bad')+'" style="margin-left:8px" title="'+(hasUpload?(imgs.length+' photo'+(imgs.length>1?'s':'')+' attached'):'No image attached')+'"></span>' +
       '</div>' +
       '<div class="img-verify-body">' +
         '<div class="img-thumb-sm" data-imgn="'+e.n+'" onclick="triggerVerifyUpload('+e.n+')">'+thumbHtml+'</div>' +
         '<div class="img-verify-checks">' +
           (hasUpload
-            ? '<div class="verify-item"><span class="vcheck ok"></span><span style="color:#3A7A55;font-weight:600">Image attached — prompts will reference '+esc(e.id)+'</span></div>'
-            : '<div class="verify-item"><span class="vcheck bad"></span><span style="color:var(--red)"><strong>No image attached.</strong> The AI will invent this subject from text alone, which is why it generates a different restaurant.</span><div class="verify-fix">Click the thumbnail above to attach your photo of '+esc(e.label.toLowerCase())+'.</div></div>') +
+            ? '<div class="verify-item"><span class="vcheck ok"></span><span style="color:#3A7A55;font-weight:600">'+imgs.length+' photo'+(imgs.length>1?'s':'')+' attached — prompts will reference '+esc(e.id)+'</span></div>'
+            : '<div class="verify-item"><span class="vcheck bad"></span><span style="color:var(--red)"><strong>No image attached.</strong> The AI will invent this subject from text alone, which is why it generates a different restaurant.</span><div class="verify-fix">Click the thumbnail above to attach your photo of '+esc(e.label.toLowerCase())+'. You can attach more than one angle of the same subject.</div></div>') +
+          stripHtml +
           (checks.length && !hasUpload ? '<div style="margin-top:8px;font-size:12px;color:var(--ink-soft);font-weight:600">Photo checklist — shoot or check these before attaching:</div>' + checkRows : '') +
         '</div>' +
       '</div>' +
@@ -2649,6 +2742,7 @@ function renderAssets(){
   (g.length ? '<div class="refnote"><b>The continuity set: '+g.join(", ")+'</b><br>' +
     'Attach these same files to every single generation. They are what stop the room and the food changing between shots. ' +
     'The prompts name them individually, so you never have to guess which ones are meant.</div>' : "");
+
   const ov = [];
   T.slots.forEach(s=>{ if(s.overlay) ov.push("Slot "+s.n+": "+s.overlay.t+", "+s.overlay.max+" characters"); });
   if(S.name) ov.push("Logo lockup on the final slot");
@@ -2659,6 +2753,22 @@ function renderAssets(){
   renderPack(map);
 }
 
+function framesRowHtml(s, m){
+  var fu = (window._frameUploads && window._frameUploads[s.n]) || {};
+  function frameSlot(which, label){
+    var im = fu[which];
+    var thumb = im ? '<img src="'+im.url+'" alt="">' : '<span>+</span>';
+    var del = im ? '<button type="button" class="frame-del" onclick="event.stopPropagation();removeFrameImage('+s.n+',\''+which+'\')" title="Remove">&#x2715;</button>' : '';
+    return '<div class="frame-slot">' +
+      '<div class="frame-thumb" onclick="event.stopPropagation();triggerFrameUpload('+s.n+',\''+which+'\')">'+thumb+del+'</div>' +
+      '<span class="frame-label">'+label+(im?' — '+esc(im.name):'')+'</span>' +
+    '</div>';
+  }
+  return '<div class="frame-row">' +
+    '<span class="frame-row-title">Optional — pin this shot\'s first and/or last frame (' + esc(m.label) + ' supports this):</span>' +
+    frameSlot('start','Start frame') + frameSlot('end','End frame') +
+  '</div>';
+}
 function renderPack(map){
   const T = TPL.chosen, m = M();
   map = map || subjects();
@@ -2668,11 +2778,11 @@ function renderPack(map){
     : "One complete prompt per shot, each carrying the identical set lock and style lock. Generate them in order — every prompt after the first refers back to the one before, which is what stops the look drifting.";
 
   const man = imageManifest();
-  $("#pack").innerHTML = T.slots.map((s,i)=>{
+  $("#pack").innerHTML = '<input type="file" id="frame-upload" accept="image/*" style="display:none">' + T.slots.map((s,i)=>{
     const subj = map[s.n];
     const img = imageForSlot(s.n, man);
     const ex = expectation(s, subj);
-    const ai = shotPrompt(s, subj, i>0 ? T.slots[i-1].n : null, man);
+    const ai = shotPrompt(s, subj, i>0 ? T.slots[i-1].n : null, man, i<T.slots.length-1 ? T.slots[i+1].n : null);
     const sh = hybrid ? shootBrief(s, subj, img) : null;
     const bars = [];
     if(sh) bars.push({k:"shoot", label:"What to film", body:sh});
@@ -2681,13 +2791,15 @@ function renderPack(map){
     return '<div class="shot" data-open="'+(i===0)+'">' +
       '<div class="shot-h"><span class="n">'+s.n+'</span>' +
         '<span class="hgroup"><b>'+esc(ex.w)+'</b><small>'+esc(ex.t)+'</small></span>' +
-        '<span class="meta">'+s.dur+"s<br>"+(img?'<b class="imgtag">'+esc(img.id)+"</b>":'<span class="gen">generated</span>')+"</span></div>" +
+        '<span class="meta">'+s.dur+"s<br>"+(img?'<b class="imgtag" title="'+esc(img.label)+'">'+esc(img.id)+"</b>":'<span class="gen">generated</span>')+"</span></div>" +
       '<div class="shot-body">' + bars.map(b=>
         '<div class="bar" data-kind="'+b.k+'">' +
           '<div class="bar-h"><span>'+b.label+'</span>' +
             '<button class="ghost tiny copybox" data-copy="'+esc(b.body).replace(/"/g,"&quot;")+'">Copy</button></div>' +
           "<pre>"+esc(b.body)+"</pre></div>").join("") +
-      "</div></div>";
+      "</div>" +
+      (m.frames ? framesRowHtml(s, m) : "") +
+      "</div>";
   }).join("");
 
   $$("#pack .shot-h").forEach(h=> h.addEventListener("click", e=>{
@@ -2707,6 +2819,7 @@ function renderPack(map){
   }));
 }
 
+
 function packText(){
   const T = TPL.chosen; if(!T) return "";
   const map = subjects(), m = M();
@@ -2714,12 +2827,17 @@ function packText(){
     (S.name||"Restaurant") + " — " + T.name + " — " + C.mode.toUpperCase(),
     "Engine: " + m.label + " · " + C.aspect + " · " + T.slots.length + " shots · " +
       T.slots.reduce((a,s)=>a+s.dur,0).toFixed(1) + "s total",
-    "", "HOW TO RUN THIS", ...m.prompting.map(x=>"• "+x), "",
+    "",
+    m.label.toUpperCase() + " — WHAT THIS GENERATOR IS GOOD AT",
+    ...m.good.map(x=>"• "+x), "",
+    m.label.toUpperCase() + " — WATCH FOR (its real limits)",
+    ...m.bad.map(x=>"• "+x), "",
+    "HOW TO RUN THIS — prompting style for " + m.label, ...m.prompting.map(x=>"• "+x), "",
     "".padEnd(60,"—"), ""
   ].join("\n");
   const man = imageManifest();
   const imgHead = man.length ? ["IMAGES REFERENCED", ...man.map(e=> e.id + " — " + e.label + "  (shots " + e.slots.join(", ") + ")"), "", "".padEnd(60,"—"), ""].join("\n") : "";
-  return head + imgHead + T.slots.map((s,i)=> shotPrompt(s, map[s.n], i>0?T.slots[i-1].n:null, man)).join("\n\n" + "".padEnd(60,"—") + "\n\n");
+  return head + imgHead + T.slots.map((s,i)=> shotPrompt(s, map[s.n], i>0?T.slots[i-1].n:null, man, i<T.slots.length-1?T.slots[i+1].n:null)).join("\n\n" + "".padEnd(60,"—") + "\n\n");
 }
 
 $("#copyPack").addEventListener("click", async ()=>{
@@ -2734,6 +2852,99 @@ $("#dlPack").addEventListener("click", ()=>{
   a.download = (S.name.trim().toLowerCase().replace(/[^a-z0-9]+/g,"-")||"reel") + "-" + TPL.chosen.id + "-prompts.txt";
   a.click(); URL.revokeObjectURL(a.href);
   mark("#packStatus","Prompt pack downloaded.",true);
+});
+
+function extFromDataUrl(url){
+  const m = /^data:image\/([a-zA-Z0-9+.-]+);base64,/.exec(url||"");
+  if(!m) return "jpg";
+  let e = m[1].toLowerCase();
+  if(e === "jpeg") e = "jpg";
+  if(e === "svg+xml") e = "svg";
+  return e;
+}
+function base64FromDataUrl(url){
+  const i = (url||"").indexOf(",");
+  return i>-1 ? url.slice(i+1) : "";
+}
+function zipSafeName(s){
+  return String(s||"").trim().replace(/[^\w\s-]+/g,"").replace(/\s+/g,"-") || "reel";
+}
+$("#dlZip").addEventListener("click", async ()=>{
+  if(!TPL.chosen){ mark("#packStatus","Pick a template first.",false); return; }
+  if(typeof JSZip === "undefined"){ mark("#packStatus","The ZIP library did not load — check your connection and try again.",false); return; }
+  mark("#packStatus","Building ZIP…",true);
+  try{
+    const T = TPL.chosen;
+    const projectName = (S.name||"").trim() || "Restaurant Reel";
+    const folderName = zipSafeName(projectName) + "-" + zipSafeName(T.name);
+    const zip = new JSZip();
+    const root = zip.folder(folderName);
+
+    root.file("Full Prompt Pack.txt", packText());
+
+    const man = imageManifest();
+    const refFolder = root.folder("Reference Images");
+    let refCount = 0;
+    const refIndexLines = [];
+    man.forEach(e=>{
+      const entry = window._verifyUploads && window._verifyUploads[e.n];
+      const imgs = entry && Array.isArray(entry.images) ? entry.images : [];
+      imgs.forEach((im, ii)=>{
+        const ext = extFromDataUrl(im.url);
+        const suffix = imgs.length > 1 ? " (" + (ii+1) + ")" : "";
+        const fname = "IMAGE " + e.n + " - " + zipSafeName(e.label) + suffix + "." + ext;
+        refFolder.file(fname, base64FromDataUrl(im.url), {base64:true});
+        refCount++;
+      });
+      refIndexLines.push("IMAGE " + e.n + " (" + e.label + ") — used in shot" + (e.slots.length>1?"s ":" ") + e.slots.join(", ") + (imgs.length ? " — " + imgs.length + " photo" + (imgs.length>1?"s":"") + " included in this ZIP" : " — NOT attached, the AI will invent this from text alone"));
+    });
+
+    const frameFolder = root.folder("Start-End Frames");
+    let frameCount = 0;
+    const frameIndexLines = [];
+    T.slots.forEach(s=>{
+      const fu = window._frameUploads && window._frameUploads[s.n];
+      if(!fu) return;
+      ["start","end"].forEach(which=>{
+        if(!fu[which]) return;
+        const ext = extFromDataUrl(fu[which].url);
+        const fname = "Shot " + s.n + " - " + (which==="start"?"Start":"End") + " Frame." + ext;
+        frameFolder.file(fname, base64FromDataUrl(fu[which].url), {base64:true});
+        frameCount++;
+        frameIndexLines.push(fname + " — pinned as the " + which + " frame of shot " + s.n);
+      });
+    });
+
+    const readme = [
+      projectName + " — " + T.name,
+      "",
+      "WHAT'S IN THIS FOLDER, IN PLAIN TERMS",
+      "\"Full Prompt Pack.txt\" has every shot's prompt, in order, ready to paste one at a time into your video generator.",
+      "\"Reference Images\" holds the real photos of your food and space. Each is numbered — that same number is called out inside the prompt text (look for \"IMAGE 1\", \"IMAGE 2\" and so on), so you always know which photo a given prompt is asking the AI to match.",
+      "\"Start-End Frames\" (if this folder has anything in it) holds photos pinned as the exact first or last frame of one specific shot, for generators that support that feature.",
+      "",
+      "IMAGE INDEX (" + refCount + " photo" + (refCount===1?"":"s") + ")",
+    ].concat(
+      refIndexLines.length ? refIndexLines : ["No reference images were attached — every shot will be generated from text alone."]
+    ).concat([
+      "",
+      "FRAME INDEX (" + frameCount + " frame" + (frameCount===1?"":"s") + " pinned)",
+    ]).concat(
+      frameIndexLines.length ? frameIndexLines : ["No start/end frames were pinned."]
+    ).join("\n");
+    root.file("Read This First.txt", readme);
+
+    const blob = await zip.generateAsync({type:"blob"});
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = folderName + ".zip";
+    document.body.appendChild(a); a.click(); a.remove();
+    URL.revokeObjectURL(a.href);
+    mark("#packStatus", "ZIP downloaded — " + refCount + " reference photo" + (refCount===1?"":"s") + (frameCount ? ", " + frameCount + " pinned frame" + (frameCount===1?"":"s") : "") + ".", true);
+  }catch(err){
+    console.error(err);
+    mark("#packStatus","Could not build the ZIP: " + (err && err.message || err), false);
+  }
 });
 
 $("#copyAssets").addEventListener("click", async ()=>{
@@ -2891,18 +3102,68 @@ function triggerVerifyUpload(n){
   inp._targetN = n;
   inp.click();
 }
+function readFileAsDataURL(f){
+  return new Promise(function(resolve,reject){
+    var fr = new FileReader();
+    fr.onload = function(){ resolve(fr.result); };
+    fr.onerror = reject;
+    fr.readAsDataURL(f);
+  });
+}
+function removeVerifyImage(n, idx){
+  if(!window._verifyUploads || !window._verifyUploads[n] || !window._verifyUploads[n].images) return;
+  window._verifyUploads[n].images.splice(idx,1);
+  if(!window._verifyUploads[n].images.length) delete window._verifyUploads[n];
+  renderAssets();
+  if(typeof scheduleAutosave==="function") scheduleAutosave();
+}
 document.addEventListener('change', function(e){
   if(e.target.id !== 'img-verify-upload') return;
-  const f = e.target.files[0]; if(!f) return;
+  const files = Array.from(e.target.files||[]); if(!files.length) return;
   const n = e.target._targetN;
-  if(!window._verifyUploads) window._verifyUploads = {};
-  window._verifyUploads[n] = { file:f, url:URL.createObjectURL(f), name:f.name };
   e.target.value = '';
-  renderAssets(); // re-render with the new upload
-  toast('IMAGE '+n+' attached — prompt will reference your photo.');
+  Promise.all(files.map(function(f){ return readFileAsDataURL(f).then(function(url){ return {url:url,name:f.name}; }); }))
+    .then(function(imgs){
+      if(!window._verifyUploads) window._verifyUploads = {};
+      if(!window._verifyUploads[n] || !Array.isArray(window._verifyUploads[n].images)) window._verifyUploads[n] = { images: [] };
+      window._verifyUploads[n].images = window._verifyUploads[n].images.concat(imgs);
+      renderAssets();
+      if(typeof scheduleAutosave==="function") scheduleAutosave();
+      toast((imgs.length>1?(imgs.length+' photos'):'Photo')+' attached to IMAGE '+n+' — prompts will reference it.');
+    });
 });
 
-/* ---- combined export ---- */
+/* ---- start / end frame pinning, per shot (only meaningful when the chosen model supports it) ---- */
+function triggerFrameUpload(n, which){
+  const inp = document.getElementById('frame-upload');
+  if(!inp) return;
+  inp._targetN = n; inp._targetWhich = which;
+  inp.click();
+}
+function removeFrameImage(n, which){
+  if(window._frameUploads && window._frameUploads[n]){
+    delete window._frameUploads[n][which];
+    if(!window._frameUploads[n].start && !window._frameUploads[n].end) delete window._frameUploads[n];
+  }
+  renderPack(subjects());
+  if(typeof scheduleAutosave==="function") scheduleAutosave();
+}
+document.addEventListener('change', function(e){
+  if(e.target.id !== 'frame-upload') return;
+  const f = e.target.files[0]; if(!f) return;
+  const n = e.target._targetN, which = e.target._targetWhich;
+  e.target.value = '';
+  readFileAsDataURL(f).then(function(url){
+    if(!window._frameUploads) window._frameUploads = {};
+    if(!window._frameUploads[n]) window._frameUploads[n] = {};
+    window._frameUploads[n][which] = { url:url, name:f.name };
+    renderPack(subjects());
+    if(typeof scheduleAutosave==="function") scheduleAutosave();
+    toast((which==='start'?'Start':'End')+' frame attached to shot '+n+'.');
+  });
+});
+
+
 function fullBrief(){
   const b = brief();
   b.campaign = Object.assign({}, C);
@@ -2921,7 +3182,125 @@ function fullBrief(){
 
 /* ---------------- boot ---------------- */
 S.menu.categories = [{id:uid(),name:"",items:[blankItem()]}];
+
+/* ================= AUTOSAVE / RESTORE =================
+   Nothing here is a server — this file remembers only what the browser's own
+   IndexedDB remembers, on this device, in this browser. Every field, every
+   slot duration, every attached photo, and the page you were on are saved a
+   moment after you change them, and put back the moment the page opens again
+   — a refresh, closing the tab, or coming back tomorrow all land you exactly
+   where you left off. The two "Start over" buttons (top of the page, and the
+   bottom of the left-hand step list) are the only things that clear it. */
+const AUTOSAVE_DB="aakriti_autosave", AUTOSAVE_STORE="state", AUTOSAVE_KEY="main";
+function openAutosaveDB(){
+  return new Promise((resolve,reject)=>{
+    if(!window.indexedDB){ reject(new Error("no indexedDB")); return; }
+    var req = indexedDB.open(AUTOSAVE_DB, 1);
+    req.onupgradeneeded = function(){ req.result.createObjectStore(AUTOSAVE_STORE); };
+    req.onsuccess = function(){ resolve(req.result); };
+    req.onerror = function(){ reject(req.error); };
+  });
+}
+function currentStepId(){
+  var p = $$(".panel").find(function(el){ return !el.hidden; });
+  return p ? p.id : "s1";
+}
+async function saveAutosave(){
+  try{
+    var db = await openAutosaveDB();
+    var doc = {
+      S: S, C: C,
+      tplChosen: TPL.chosen ? TPL.chosen : null,
+      tplCustom: TPL.custom || null,
+      tplShowAll: !!TPL.showAll,
+      step: currentStepId(),
+      uploads: window._verifyUploads || {},
+      frameUploads: window._frameUploads || {},
+      savedAt: Date.now()
+    };
+    await new Promise(function(res,rej){
+      var tx = db.transaction(AUTOSAVE_STORE,"readwrite");
+      tx.objectStore(AUTOSAVE_STORE).put(doc, AUTOSAVE_KEY);
+      tx.oncomplete = res; tx.onerror = function(){ rej(tx.error); };
+    });
+  }catch(e){ /* autosave is best-effort — never blocks the user */ }
+}
+let _autosaveTimer=null;
+function scheduleAutosave(){ clearTimeout(_autosaveTimer); _autosaveTimer=setTimeout(saveAutosave,700); }
+async function loadAutosave(){
+  try{
+    var db = await openAutosaveDB();
+    return await new Promise(function(res){
+      var tx = db.transaction(AUTOSAVE_STORE,"readonly");
+      var req = tx.objectStore(AUTOSAVE_STORE).get(AUTOSAVE_KEY);
+      req.onsuccess = function(){ res(req.result||null); };
+      req.onerror = function(){ res(null); };
+    });
+  }catch(e){ return null; }
+}
+async function clearAutosave(){
+  try{
+    var db = await openAutosaveDB();
+    await new Promise(function(res){
+      var tx = db.transaction(AUTOSAVE_STORE,"readwrite");
+      tx.objectStore(AUTOSAVE_STORE).delete(AUTOSAVE_KEY);
+      tx.oncomplete = res; tx.onerror = res;
+    });
+  }catch(e){}
+}
+function deepAssign(target, src){
+  if(!src || typeof src!=="object") return;
+  Object.keys(src).forEach(function(k){
+    var v = src[k];
+    if(Array.isArray(v)){ target[k]=v; }
+    else if(v && typeof v==="object"){
+      if(typeof target[k]!=="object"||target[k]===null) target[k]={};
+      deepAssign(target[k], v);
+    } else target[k]=v;
+  });
+}
+async function restoreAutosave(){
+  var doc;
+  try{ doc = await loadAutosave(); }catch(e){ doc = null; }
+  if(!doc){ return false; }
+  try{
+    if(doc.S){
+      deepAssign(S, doc.S);
+      if(doc.S.menu && Array.isArray(doc.S.menu.categories) && doc.S.menu.categories.length) S.menu.categories = doc.S.menu.categories;
+    }
+    if(doc.C) Object.assign(C, doc.C);
+    window._verifyUploads = doc.uploads || {};
+    window._frameUploads = doc.frameUploads || {};
+    writeForm(); renderMenu(); validate(); renderModelNote(); renderModeNote();
+    if(doc.tplChosen){
+      var found = TEMPLATES.find(function(t){ return t.id===doc.tplChosen.id; });
+      if(!found){ TEMPLATES.push(doc.tplChosen); found = doc.tplChosen; }
+      TPL.chosen = found;
+      TPL.showAll = !!doc.tplShowAll;
+      if(doc.tplCustom) TPL.custom = doc.tplCustom;
+      fitSlots();
+      renderTemplates(); renderSlots(); renderLock(); renderAssets();
+    }
+    var step = (doc.step && document.getElementById(doc.step)) ? doc.step : "s1";
+    go(step);
+    if(typeof toast==="function"){
+      var when = doc.savedAt ? new Date(doc.savedAt).toLocaleString() : "";
+      toast("Picked up where you left off" + (when ? " (saved "+when+")" : ""));
+    }
+    return true;
+  }catch(e){ return false; }
+}
+function startOver(){
+  if(!confirm("Start a new brief? This clears everything saved in this browser — the bio, the menu, the chosen template, and every attached photo. This cannot be undone.")) return;
+  clearAutosave().then(function(){ window.location.reload(); });
+}
+document.addEventListener("input", scheduleAutosave);
+document.addEventListener("change", scheduleAutosave);
+document.addEventListener("click", scheduleAutosave);
+$$(".js-start-over").forEach(function(b){ b.addEventListener("click", startOver); });
+
 writeForm(); renderMenu(); validate(); renderModelNote(); renderModeNote();
+restoreAutosave();
 
 </script>
 
@@ -3231,7 +3610,7 @@ document.addEventListener('DOMContentLoaded',function(){
       <div class="platform-card" data-plat="tiktok"><img class="pthumb" src="data:image/jpeg;base64,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" alt=""><div class="pbody"><h4>TikTok</h4><p>Fast cuts, sound-led, hook within 1.5s, #FoodTok trends</p></div></div>
       <div class="platform-card" data-plat="instagram"><img class="pthumb" src="data:image/jpeg;base64,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" alt=""><div class="pbody"><h4>Instagram Reels</h4><p>Aesthetic-first, saveable content, carousel formats</p></div></div>
       <div class="platform-card" data-plat="youtube"><img class="pthumb" src="data:image/jpeg;base64,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" alt=""><div class="pbody"><h4>YouTube Shorts</h4><p>Longer hooks, search-indexed, subtitled, edu-tainment</p></div></div>
-      <div class="platform-card" data-plat="facebook"><img class="pthumb" src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAcFBQYFBAcGBgYIBwcICxILCwoKCxYPEA0SGhYbGhkWGRgcICgiHB4mHhgZIzAkJiorLS4tGyIyNTEsNSgsLSz/2wBDAQcICAsJCxULCxUsHRkdLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCz/wAARCAEOAeADASIAAhEBAxEB/8QAGgABAQEBAQEBAAAAAAAAAAAAAQIABgUDCP/EABwQAQEBAQADAQEAAAAAAAAAAAABETECIUFhcf/EABkBAQEBAQEBAAAAAAAAAAAAAAEAAgQFA//EABYRAQEBAAAAAAAAAAAAAAAAAAABEf/aAAwDAQACEQMRAD8A/O7Mz7vmxZkmYsUxxmWJlDCQZCISDFQQlFUEU0DFzqYqNQKip0RUagVFxMXG4yqLiYuNwKi4mLjcZVFxMXGoFxUTFyNxlUXExcbgVFRMXG4DIqCKaBioIqENxsP9YhjGYph9LJAKsCQTVChJqaupBTU1dSyU1NVRWSiwVVTQU1KqGUkKFBcWxxseQ7GZjiWg4cbEmLN9IbCxSbDjGHEYZBFRoFUEioQYqCKjcBi5ExcagVFxMXGoyqLiIuNwLi4iPpG4yqLiYuNwKi4mLjcFVFQRUbjKoqCKjUCoqJio0DFQRUaDFoSAcYpDArAkGOBICkUJNFUmgpoqqlkpqaupoKamqqWSmhVFBRRVUVlOMxjjY8h2BjjLExbGxJjjYSmMghhBhjEhoqDFQowwRUagVFRMXGgYuJio1AqLiYuNwKi4mLjUZVFxMXG4FRcTFxuMqi4mLjcCouIi41GaqLiYqNwKiomKjQURFRoMY0YpiDEG38Yi9KDVmBFFIoQTVVISaKpIKU1dTWSmpqqKyUCqooKaFJCcazY2PHdjMcYpmxoUmbDjFNhjGRBoqQQwowxoY0DFQRU9EGRUEVGoFRUTFxqBUXExUjcC4uIi43GVRcTFxqBUXExcbjKouJi43AqLiIuNwKiomLjUZVDBFRqAxQhjSMIhhDYWZBgfTJDAoIpasAhU1VFBTUqFZKamqqaEKn6pNZKb7FVU2AhNUAXG42HGx5DrGFsKQbC2JMWOFMY0JTFiQ0UFQgwwRUKMXExUajKouJivFuBUXExUagXF+KIuNwKi4mKjUZXFxHiuNwLi4iL8W4yuKiYqNwKi4iLjUCoqJio0DFRMVCDDBC0CzMkzMEiGoSAVRQk0U0ApoporJTRTUggGpZIoNASaKaGS4/GLPJdYkLHCgxbEmLEoGMUiYIqENDGhIMVBFRpGKiYuNAxcTFRqMqi4iLjUC4qJivFuBcXERcagXFxEVG4yuLiIudbgXOKiIuNQLioiLjcZVFIi40DFRMVCDDEkpTBiiwZJqCAmFYBAEUFNFNTQQmqqazUKmqTQQKaKCkU0MpyLHGx5TsBxsZJmYxBsIJTYWMQYtDCjDBFRpNFQQkKioIY1AqLiYqcaCoqJi41AqLiIuNxlUXEeK41AuKiYqNwLi4iLjUZVFxEXG4FRUTKqNBUVExUaCoUxUIJGkpizFNrMyQZmqQB1ITVNNAQ+pporJFTSKCE00WskVJoCFBTQXKY2FnlOsYxZAHGJIwthQaQiEpoY0JRhgVCGihDCFRUTFRoKiomKjUCouIi41AqKiYqNQLi4iLjcCouIi41GVxURFxuBcVERcagXFREVGgqKiYpoKhSSFFJaROhkDoZkmYNqTBgC1TSAhUkVkippoBFSaKCKKwZTVJALlcbC0eY6hhwskCzYkzYWIaFmSYscIOGBRTKghhBioIWkqKghjUCoqCGNQLiomKjUC4qJio1GVxUTFTrUC4qIi43AuKiJVRqBcVERUrQXFREU0FQplOkKhDaUSGIOsGSZm0BMKw1FqLWorJFFai0JqmtQCKDQEKK1orJFBATmGODHmupsbCyTMzJMY2NhDHGKTRmJTRUEMIMMEVCiYFRoKhiYuEGLiIqNBcVExUagVFRMVGoFxURFxuBcVERUaC4qVEVGoFyqiIqVplcVKiGFLh1J1oK0p06UdOp1kFa2gJHWGjUSNYaEw1qkFqKwoTJptTQW1NIrKFDaAWtFrUUJzbYWedjpGHGbDiZjjYkzMyTGNhIaEGJFmhKMIJCoYIY0FQwQwpcMTFRoKiomKjQVFxEVGoFxURFRqBcqomGNBcVKmGNQPpDERUpC5VSo0tBZ1Ep0hbanTpSm1OnSjrJ0pM2jW0JmGjQjam1gC2itotCZLWjQWtTSARRSnQmDWgJz+NjM4HQzGMkDjFIYxxkmhZsKYs0QJgJRhgJBhgUUYqJio0DFRMVCFRURFRpLioiKjUZXFREVGoFyqiIqFKipUwxoLioiK1oKitRFEKlOo06Utk6dIOnU62lK1tTrakdYaNCULRoSNo0aKCwYaE2jWtFBbRaGCAai1ks1oCTwmOM4XQDjFIYxYhmjYUmZjEgWJDGdZkmLEomAwgxUTFFGKiVRoGKiYqEKioiKjUCoqJimgqKiIqFLh1MLUC4Yk60FwyolUQo6nTqStZJ0pTJ1tIUydbUlDRraE2sNGokWtQE1A0AlOtaAmoYAsGoCasNYJ4uNhxscj7DC2NiTMWSDYWxJmLFDCxSYgpMWMIYxiU0UCQZ1SYqFGKiYY0FRUTDCFRUTFNBUKYohUMqYWguGI1UpSoYkykK0pJSmGsQrW1LJK1tSySgG1JmGsC2htGhMKzIgNaAm0aQEAdALBtATyWONjlfYMcbEmZmQZmMJGFmiDGNjJMWYpjGKTQgwgloxBhZilQiGEKMBjQMVEkpUUmKIMVqYWgVRJhStMqTpCpTqYSlaw1tSLDW0gsNZIto1tBbWo1km0WsNCbQwtBYMyTaGATaGrAhm0aE8vGxWNjnfVOHDjYkMbDjYkGhZYmxsY4kDGJAMbGSLMSmIw4g0VASmVBCQYYISjFRMVCCYIYUTAY0FxtBIJgJROhiFQ6kpKYNpBYa2pFhrakQ2sk2trBFgwCZqwoIrMEm1m0BMk0UJgzIvOYs530BZkmxsZkmxsZkGZmSLNCUzMyRZiUxBSYtDCGMBhRMEJBhgJRVBGIVpiVQgwglFUSSiQxCodSUjrAkFgyTEMkzMEjrUNURrMAmatQCKKd9hJgU9CIpCQBoBf//Z" alt=""><div class="pbody"><h4>Facebook</h4><p>Community-first, share-driven, offers perform well</p></div></div>
+      <div class="platform-card" data-plat="facebook"><img class="pthumb" src="data:image/jpeg;base64,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" alt=""><div class="pbody"><h4>Facebook</h4><p>Community-first, share-driven, offers perform well</p></div></div>
     </div>
 
     <div style="margin-top:28px">
