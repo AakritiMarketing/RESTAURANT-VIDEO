@@ -1123,6 +1123,7 @@ body{background:var(--page);font-family:'Space Grotesk',sans-serif;color:var(--n
       <p class="note">Step 2 turns these into lighting, lens and set-dressing choices, so keep them concrete.</p>
       <div class="grid2">
         <div class="field"><label for="f_int">Interior</label><input id="f_int" data-k="visual_identity.interior_style" placeholder="Warm wood, brass pendants, open charcoal grill"></div>
+        <div class="field"><label for="f_kitchen">Kitchen / prep area</label><input id="f_kitchen" data-k="visual_identity.kitchen_style" placeholder="Stainless steel prep counters, gas range, exposed brick pass, hanging pans"></div>
         <div class="field"><label for="f_plate">Plating and serveware</label><input id="f_plate" data-k="visual_identity.plating_style" placeholder="Copper platters, flatbread on paper"></div>
         <div class="field"><label for="f_light">Light in the room</label><input id="f_light" data-k="visual_identity.lighting" placeholder="Low tungsten, grill flare, neon sign spill"></div>
         <div class="field"><label for="f_colors">Brand colours</label><input id="f_colors" data-k="visual_identity.brand_colors" placeholder="#0F5132, #E8B54B"></div>
@@ -1499,7 +1500,7 @@ const S = {
   contact:{phone:"",landline:"",whatsapp:"",email:"",website:"",reservation_url:""},
   social:{instagram:"",facebook:"",tiktok:"",snapchat:"",youtube:"",x:""},
   description:"", bio:"", history:"", feature_story:false, unique_selling_points:"", audience:"",
-  visual_identity:{interior_style:"",plating_style:"",lighting:"",brand_colors:""},
+  visual_identity:{interior_style:"",kitchen_style:"",plating_style:"",lighting:"",brand_colors:""},
   ratings_text:"", review_highlights:{praised:"",criticized:""}, most_reviewed_items:"",
   menu:{currency:"",source_url:"",last_verified:"",categories:[]}
 };
@@ -1601,7 +1602,7 @@ known,
 '    "ratings": [ { "platform": "", "score": 0, "reviews_count": 0, "url": "", "checked_on": "' + today + '" } ],',
 '    "review_highlights": { "praised": [], "criticized": [] },',
 '    "most_reviewed_items": [], "best_sellers": [], "signature_items": [],',
-'    "visual_identity": { "interior_style": null, "plating_style": null, "lighting": null, "brand_colors": [], "logo_url": null },',
+'    "visual_identity": { "interior_style": null, "kitchen_style": null, "plating_style": null, "lighting": null, "brand_colors": [], "logo_url": null },',
 '    "menu": {',
 '      "currency": "", "source_url": "", "last_verified": "' + today + '",',
 '      "categories": [',
@@ -1680,7 +1681,7 @@ function applyData(obj){
   ["instagram","facebook","tiktok","snapchat","youtube","x"].forEach(k=> set("social."+k, r.social && r.social[k]));
   set("description",r.description); set("bio",r.bio); set("history",r.history);
   set("unique_selling_points",r.unique_selling_points); set("audience",r.audience);
-  ["interior_style","plating_style","lighting","brand_colors"].forEach(k=> set("visual_identity."+k, r.visual_identity && r.visual_identity[k]));
+  ["interior_style","kitchen_style","plating_style","lighting","brand_colors"].forEach(k=> set("visual_identity."+k, r.visual_identity && r.visual_identity[k]));
   if(Array.isArray(r.ratings) && r.ratings.length){
     S.ratings_text = r.ratings.map(x=> [x.platform, x.score, x.reviews_count ? x.reviews_count+" reviews" : ""].filter(Boolean).join(" ")).join(" · ");
   }
@@ -1901,6 +1902,7 @@ function brief(){
       unique_selling_points: split(S.unique_selling_points), audience:S.audience,
       visual_identity:{
         interior_style:S.visual_identity.interior_style,
+        kitchen_style:S.visual_identity.kitchen_style,
         plating_style:S.visual_identity.plating_style,
         lighting:S.visual_identity.lighting,
         brand_colors: split(S.visual_identity.brand_colors)
@@ -3314,8 +3316,10 @@ function subjects(){
    The style lock pins the camera. This pins the place: same room, same hour,
    same surfaces. Without it a text-to-video model reinvents the restaurant
    on every call and the reel reads as seven different venues. */
-function setLock(){
+function setLock(shotAsset){
   const room  = S.visual_identity.interior_style;
+  const kitchen = S.visual_identity.kitchen_style;
+  const isBackOfHouse = shotAsset==="kitchen" || shotAsset==="staff";
   const plate = S.visual_identity.plating_style;
   const light = S.visual_identity.lighting;
   const cuisine = split(S.cuisines)[0] || "";
@@ -3336,52 +3340,49 @@ function setLock(){
   }[C.tone] || "evening";
 
   const L = [];
-  L.push("ACCURACY LOCK — read before generating anything");
-  L.push("This reel depicts ONE real restaurant. Do not upgrade, beautify or reimagine it.");
-  L.push("Do not substitute a cleaner, larger or more luxurious space than what is described or shown in the reference images.");
-  L.push("If reference images are attached, they are the ground truth. Every generated frame must match them in:");
-  L.push("  — Wall colour and texture");
-  L.push("  — Floor material");
-  L.push("  — Ceiling height and fixtures");
-  L.push("  — Furniture style, colour and density");
-  L.push("  — Overall size and feel of the space");
-  L.push("A medium-sized casual restaurant must look medium-sized. A simple interior must stay simple.");
-  L.push("Generating a VIP, luxury or high-end atmosphere when the reference shows otherwise is a hard failure.");
-  L.push("");
-  L.push("SET LOCK — identical in every shot, do not vary");
-  L.push("One venue, one hour, one continuous visit. Every shot happens in this place:");
+  L.push("WORLD LOCK — one real restaurant, identical in every shot");
+  L.push("This reel is ONE real restaurant, one hour, one continuous visit. Do not upgrade, beautify or reimagine it — if reference images are attached, they are ground truth for scale, materials and finish. A modest space stays modest.");
   const venue = (cuisine ? cuisine+" " : "")+styleWord;
   const article = /^[aeiou]/i.test(venue) ? "an " : "a ";
-  L.push("• Venue: "+article+venue+(S.location.city ? " in "+S.location.city : "")+".");
+  L.push("Venue: "+article+venue+(S.location.city ? " in "+S.location.city : "")+".");
 
-  // Room — if empty, do NOT invent a nice room, leave it factual
-  if(room){
-    L.push("• Room: "+room+". Identical walls, seating, fixtures and layout in every shot.");
-    L.push("  Reproduce this room faithfully. Do not make it larger, grander or more designed than described.");
+  // Room — if empty, do NOT invent a nice room, leave it factual.
+  // A kitchen/prep shot describes the BACK-OF-HOUSE here, never the dining
+  // room — conflating the two is exactly what makes a model plate or cook
+  // food at a dining table instead of the kitchen counter.
+  if(isBackOfHouse){
+    if(kitchen){
+      L.push("Room: the kitchen / prep area — "+kitchen+". Stainless steel counters, commercial cooking equipment, no dining tables, no seated guests, no menus in this frame.");
+    } else {
+      L.push("Room: the kitchen / prep area — a working restaurant back-of-house with stainless steel counters and commercial cooking equipment. No dining tables, no seated guests, no menus in this frame.");
+    }
+    if(room) L.push("(The dining room seen elsewhere in this reel is a different room — not shown here.)");
+  } else if(room){
+    L.push("Room: "+room+". Identical walls, seating, fixtures and layout in every shot — reproduce it faithfully, no larger or more designed than described.");
   } else {
-    L.push("• Room: no interior description provided. Use the reference images as the only source of truth for the room.");
-    L.push("  If no reference image shows the interior, keep it simple and mid-range — do not invent decor.");
+    L.push("Room: no interior description provided — use the reference images as the only source of truth, and if none exist, keep it simple and mid-range.");
   }
 
-  L.push("• Hour: "+hour+". The light outside never changes between shots.");
+  L.push("Hour: "+hour+". The light outside never changes between shots.");
 
   if(light){
-    L.push("• Ambient light: "+light+". Same sources, same direction, same intensity throughout.");
-    L.push("  Do not add dramatic lighting, spotlights or mood lighting that is not described here.");
+    L.push("Light: "+light+" — same sources, direction and intensity throughout, no added drama or spotlighting.");
   } else {
-    L.push("• Ambient light: match the reference images exactly. If no interior reference exists, use practical overhead lighting — not atmospheric, not cinematic, realistic.");
+    L.push("Light: match the reference images exactly; if none exist, use practical overhead lighting, not cinematic.");
   }
 
   if(plate){
-    L.push("• Surfaces: "+plate+", repeated across every shot. No new plate styles appear.");
+    L.push("Surfaces: "+plate+", repeated across every shot — no new plate styles appear.");
   } else {
-    L.push("• Surfaces: use whatever serveware is visible in the reference images. Do not use luxury or fine-dining plating.");
+    L.push("Surfaces: whatever serveware the reference images show — nothing luxury or fine-dining.");
   }
 
-  L.push("• Occupancy: the room stays equally busy from first shot to last.");
-  L.push("• Location accuracy: "+
-    (S.location.city ? "This restaurant is in "+S.location.city+(S.location.country?", "+S.location.country:"")+". " : "")+
-    "Any exterior shots must match this location's architecture, street signage style and ambient light.");
+  L.push(isBackOfHouse
+    ? "Occupancy: kitchen and prep staff working at a normal service pace."
+    : "Occupancy: the room stays equally busy from first shot to last.");
+
+  if(S.location.city) L.push("Location: "+S.location.city+(S.location.country?", "+S.location.country:"")+" — any exterior shot must match this location's architecture and street light.");
+
   return L.join("\n");
 }
 /* ---- what the AI will actually hand back, in one line ---- */
@@ -3641,12 +3642,38 @@ function pickDialogueLine(s, T, subj){
   return bank[roleIdx % bank.length];
 }
 
+/* ---- shot-specific slow-motion / frame-rate cues, lifted from the
+   restaurant cinematography shot-skill library (the pour, the cheese pull,
+   sizzle & flame, steam) so physics-heavy moments render as a real camera
+   would actually capture them, rather than a smeared or frame-skipped
+   approximation. ---- */
+function motionPhysicsLine(text){
+  const t = (text||"").toLowerCase();
+  if(/\bpour|drizzl|splash|stream\b/.test(t))
+    return "This shot centres on a liquid in motion: render it as if captured at 120fps and played back slowed down, so the pour or splash follows one continuous, gravity-true arc — never a blurred smear or a frame-skipped jump.";
+  if(/cheese|\bstretch|\bpull\b/.test(t))
+    return "This shot centres on a stretch or pull: render it as if captured at 120fps and played back slowed down, so the separation and elasticity read clearly frame by frame rather than as a blur.";
+  if(/flame|fire|sizzl|\bchar\b/.test(t))
+    return "This shot centres on flame or fire: render it as if captured at 120fps for a smooth, physically accurate flicker, slightly underexposed so the fire itself reads as the key light rather than blowing out.";
+  if(/steam|smoke/.test(t))
+    return "This shot centres on steam or smoke: render it as if captured at 60fps — slowed further than that starts to look wrong — rising and dispersing against a darker background so it stays visible.";
+  return null;
+}
 function shotPrompt(s, subj, prev, man, next){
   const m = M(), T = TPL.chosen, L = T.look;
   man = man || imageManifest();
   const img = imageForSlot(s.n, man);
   const presenterEntry = P.enabled ? man.find(function(e){ return e.code==="presenter"; }) : null;
   const presenterActive = !!(presenterEntry && globalRefs(man).some(function(e){ return e.n===presenterEntry.n; }));
+  const shotSilent = s.vo==="0" || s.vo===0;
+  // The presenter's photo is very often attached as a continuity/style
+  // reference (they're priority #1 in globalRefs()) even on shots where
+  // their face is never plausibly in frame -- a macro food shot, a hands
+  // shot, an exterior. The full identity-lock paragraph below should only
+  // fire when the presenter is actually established as speaking on camera
+  // in THIS shot -- exactly the same condition the AUDIO block already
+  // uses to decide whether this shot's dialogue is attributed to them.
+  const presenterOnCam = !!(presenterActive && typeof AV!=="undefined" && AV.voice && AV.voiceMode!=="voiceover" && !shotSilent);
   const room = S.visual_identity.interior_style, plate = S.visual_identity.plating_style;
   const colors = split(S.visual_identity.brand_colors);
   const cuisine = split(S.cuisines)[0] || "";
@@ -3655,10 +3682,9 @@ function shotPrompt(s, subj, prev, man, next){
   out.push("SHOT " + s.n + " OF " + T.slots.length + " — " + (ROLE_LABEL[s.role]||[s.role])[0] + " — " + s.dur + "s — " + C.aspect);
 
   out.push("");
-  out.push("CAMERA — read this first, it governs everything below");
-  out.push("Lens: " + L.lens + ". House move for this template: " + L.motion + ".");
-  out.push("That house move describes how the camera behaves DURING this one shot — it is not a rule that every shot shares one fixed camera position. Each shot can, and where instructed below must, start from a different angle or distance than the shot before it.");
-  out.push("This shot's move: " + firstSentence(adapt(s.shot)));
+  out.push("CAMERA — one continuous move, no cuts inside this shot");
+  out.push("Lens: " + L.lens + ".");
+  out.push("Move: " + firstSentence(adapt(s.shot)));
   out.push(paceLine(T, s));
   out.push(cameraPhysicsLine(T));
   if(img && img.slots && img.slots.length>1){
@@ -3671,7 +3697,7 @@ function shotPrompt(s, subj, prev, man, next){
   out.push("");
   imagesBlockLines(s, man, C.mode).forEach(function(l){ out.push(l); });
 
-  if(presenterActive){
+  if(presenterOnCam){
     out.push("");
     out.push("PRESENTER — protect this real person's identity");
     out.push("A real, rights-cleared photo of " + (P.role||"the presenter") + " is attached above (" + presenterEntry.id + "). This is not a mood reference, it is the exact person — do not reinvent them.");
@@ -3681,6 +3707,10 @@ function shotPrompt(s, subj, prev, man, next){
     out.push("Hair, facial hair and hairline match the reference exactly. Do not generate a younger, thinner or more conventionally attractive version of this person.");
     if(P.note && P.note.trim()) out.push("What they're doing in this reel: " + P.note.trim() + ".");
     out.push("Whenever this face is on screen it must be recognisably this same person. If this shot's motion turns them away or out of frame, that is fine.");
+  } else if(presenterActive){
+    out.push("");
+    out.push("CONTINUITY — presenter reference");
+    out.push((P.role||"The presenter") + "'s photo is attached above (" + presenterEntry.id + ") for continuity across the reel. They are not necessarily on camera in this particular shot — if any part of a person appears, keep it consistent with that reference; otherwise this shot can be people-free.");
   }
 
   out.push("");
@@ -3707,6 +3737,9 @@ function shotPrompt(s, subj, prev, man, next){
   out.push("Every movement in frame has one clear, single cause and one clear direction — no random jitter, no unmotivated drift, no object moving on its own or in two directions at once.");
   out.push("Each object exists once: never duplicate the same plate, glass, garnish or utensil so it appears twice in one frame.");
   out.push("Scale and material stay constant: a plate, glass, cut of meat or utensil is the same size and the same material in every frame it appears in.");
+  out.push("Any other people visible in the background move and behave like real, unposed customers or staff — natural blinking, weight shifting, mid-conversation gestures, breathing — never frozen, waxwork-still, or repeating an identical loop of motion.");
+  const mpl = motionPhysicsLine(subject);
+  if(mpl) out.push(mpl);
 
   out.push("");
   out.push("FLOW — how this shot cuts against its neighbours");
@@ -3716,8 +3749,7 @@ function shotPrompt(s, subj, prev, man, next){
   else out.push("Closes the reel: let the motion settle rather than cutting away sharply.");
 
   out.push("");
-  out.push("SET LOCK — identical in every shot, do not vary");
-  out.push(setLock());
+  out.push(setLock(s.asset));
 
   out.push("");
   out.push("STYLE LOCK — identical in every shot, do not vary");
@@ -3726,7 +3758,6 @@ function shotPrompt(s, subj, prev, man, next){
   out.push("Grade: " + L.grade);
   out.push("Light: " + L.light);
   out.push("Grain: " + L.grain);
-  out.push("Motion: " + L.motion);
   if(colors.length) out.push("Brand colours to favour: " + colors.join(", "));
 
   out.push("");
@@ -3759,12 +3790,12 @@ function shotPrompt(s, subj, prev, man, next){
   out.push("Time of day, light colour and room appearance are constant across the entire reel.");
 
   out.push("");
-  out.push(m.audio ? "AUDIO — every line below must render together, none of them optional" : "AUDIO (add separately in post — " + m.label + " has no native audio)");
+  out.push(m.audio ? "AUDIO — primary layer for this shot" : "AUDIO (add separately in post — " + m.label + " has no native audio)");
   const sfxLine = (typeof AV==="undefined" || AV.sfx!==false) ? audioFor(s) : "No food sound effects for this shot — ambience only.";
-  const silentShot = s.vo==="0" || s.vo===0;
+  const hasDialogue = !!(typeof AV!=="undefined" && AV.voice && !shotSilent);
   let voiceLine = "No speech, no dialogue, no voices.";
-  if(typeof AV!=="undefined" && AV.voice && !silentShot){
-    const voiceWho = (AV.voiceMode!=="voiceover" && presenterActive) ? (P.role||"the presenter") : null;
+  if(hasDialogue){
+    const voiceWho = presenterOnCam ? (P.role||"the presenter") : null;
     const customSlot = customNoteSlotIdx(T);
     const useCustom = !!(AV.voiceNote && AV.voiceNote.trim() && s.n===customSlot);
     const line = useCustom ? AV.voiceNote.trim() : pickDialogueLine(s, T, subj);
@@ -3774,34 +3805,41 @@ function shotPrompt(s, subj, prev, man, next){
     } else {
       voiceLine = "A short off-camera voiceover plays" + budget + ": \"" + line + "\". No on-camera mouth movement needs to match it.";
     }
-  } else if(typeof AV!=="undefined" && AV.voice && silentShot){
+  } else if(typeof AV!=="undefined" && AV.voice && shotSilent){
     voiceLine = "This shot stays silent on purpose — no speech here, let the sound effect carry it.";
   }
-  const musicLine = (typeof AV!=="undefined" && AV.music) ? ("Music runs under the shot" + (AV.musicNote && AV.musicNote.trim() ? " — " + AV.musicNote.trim() + "." : ".")) : "";
   out.push("SOUND EFFECTS (required — do not let dialogue replace this): " + sfxLine);
   out.push("DIALOGUE: " + voiceLine);
-  if(musicLine) out.push("MUSIC: " + musicLine);
-  out.push("All lines above must be audible together in the generated clip. The sound effect is not background filler — if the model can only render one audio layer, keep the sound effect and drop the music before dropping it.");
+  out.push("Primary layer for this generation: " + (hasDialogue ? "the dialogue above, with the sound effect underneath it." : "the sound effect above.") + " If the model can only render one audio layer, keep this one.");
+  if(typeof AV!=="undefined" && AV.music){
+    out.push("MUSIC (post-production only — do not ask the generator to render this): add under the edit afterwards" + (AV.musicNote && AV.musicNote.trim() ? ", " + AV.musicNote.trim() + "." : "."));
+  }
 
   out.push("");
   if(m.negatives===false){
     out.push("REQUIRED — say only what should be true (" + m.label + " reads negative instructions unreliably, sometimes doing the opposite)");
-    const faceReqClause = presenterActive
+    const faceReqClause = presenterOnCam
       ? "Faces of anyone other than " + (P.role||"the presenter") + " stay soft, turned away, or out of focus — but " + (P.role||"the presenter") + "'s face is a real, rights-cleared reference attached above and must stay naturally in focus and recognisable, never obscured."
       : "Keep faces soft, turned away, or out of focus.";
     const baseReq = "Keep every surface in frame plain and unmarked: blank walls, unlabelled packaging, clean tabletops — nothing readable anywhere in shot, no logos, no signage, no menu or price text. " + faceReqClause + " Hands are anatomically correct — five fingers each, natural and relaxed, exactly one pair per person and no more. Food looks fresh, matte where matte is right and moist where moist is right, never plastic or glossy. Exposure and colour stay natural, matching the STYLE LOCK exactly, with no artificial HDR punch. Every object rests in contact with a real surface at all times, appearing exactly once — no object duplicated anywhere in frame. Cutlery, glassware and plates each appear exactly once, undistorted. Every motion in frame has a single clear cause and a single clear direction, timed to match the PACE line above.";
     const accuracyReq = " Keep the room exactly as modest or as grand as the reference images show — same fixtures, same surfaces, same size as the source, nothing grander, nothing invented.";
     const avoidReq = C.avoid.trim() ? " Also stay well clear of: "+C.avoid.trim()+"." : "";
-    out.push(baseReq + accuracyReq + avoidReq);
+    const locationReq = (s.asset==="kitchen"||s.asset==="staff")
+      ? " This shot stays entirely in the kitchen or prep area — stainless counters, cooking equipment, staff at work — with no dining tables, no seated guests and no menus anywhere in frame."
+      : (s.asset==="interior" ? " This shot stays entirely in the dining room — no cooking equipment, stoves or chef's line anywhere in frame." : "");
+    out.push(baseReq + accuracyReq + locationReq + avoidReq);
   } else {
     out.push("NEGATIVE — hard failures, regenerate if any of these appear");
-    const faceNegClause = presenterActive
+    const faceNegClause = presenterOnCam
       ? "No faces in focus other than " + (P.role||"the presenter") + "'s — that face is a real, rights-cleared reference and must stay in focus and recognisable."
       : "No faces in focus.";
     const baseNeg = "No on-screen text, no lettering, no signage copy, no logos, no readable menus or price tags. " + faceNegClause + " No warped hands or extra fingers. No duplicated or merged hands, no extra limbs. No plastic or waxy food. No HDR oversaturation. No stock-photo smiling. No floating objects. No duplicated cutlery, plates or garnish. No random or unmotivated movement — every motion needs a clear single cause. No pacing that contradicts the PACE line above.";
     const accuracyNeg = " No VIP booths, velvet ropes, chandelier lighting, marble surfaces, luxury finishes or any premium elements not present in the reference images. No larger space than the source. No aspirational upgrades. No invented decor. The room must match the reference images in size, style and materials — if it looks like a different and better restaurant, it is wrong.";
     const avoidNeg = C.avoid.trim() ? " Also keep out: "+C.avoid.trim()+"." : "";
-    out.push(baseNeg + accuracyNeg + avoidNeg);
+    const locationNeg = (s.asset==="kitchen"||s.asset==="staff")
+      ? " No dining tables, seated guests or menus — this is the kitchen or prep area, not the dining room."
+      : (s.asset==="interior" ? " No cooking equipment, stoves or chef's line visible — this is the dining room, not the kitchen." : "");
+    out.push(baseNeg + accuracyNeg + locationNeg + avoidNeg);
   }
 
   if(s.overlay){
@@ -4153,6 +4191,9 @@ function packText(){
     ...m.bad.map(x=>"• "+x), "",
     "HOW TO RUN THIS — prompting style for " + m.label, ...m.prompting.map(x=>"• "+x), "",
     plat.label.toUpperCase() + " — PLATFORM STRATEGY FOR MORE REACH", ...plat.tips.map(x=>"• "+x), "",
+    "REEL EDITING RHYTHM — for whoever cuts these shots together, NOT a per-shot camera instruction",
+    "This template's overall cutting rhythm across the finished reel: " + T.look.motion + " Each shot below is one single continuous take on its own — this line only describes how they get cut together afterwards, and must never be asked of any one generation by itself.",
+    "",
     "".padEnd(60,"—"), ""
   ].join("\n");
   const man = imageManifest();
